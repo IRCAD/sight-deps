@@ -8,11 +8,11 @@ set(CACHED_URL http://download.osgeo.org/libtiff/tiff-4.0.3.zip)
 set(TIFF_HASHSUM dd70349cedb3981371686e1c9b89a7f9)
 
 if(WIN32 OR ANDROID)
-    
+
     set(TIFF_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-    
+
     set(TIFF_PATCH_COMMAND ${CMAKE_COMMAND} -E copy "${TIFF_PATCH_DIR}/CMakeLists.txt" "<SOURCE_DIR>/")
-    
+
     if(ANDROID)
         list(APPEND TIFF_PATCH_COMMAND
                 COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/tif_config.vc.h.droid.diff -d <SOURCE_DIR>
@@ -23,9 +23,9 @@ if(WIN32 OR ANDROID)
                 COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/tif_config.vc.h.win32.diff -d <SOURCE_DIR>
             )
     endif()
-             
+
     set(TIFF_CMAKE_ARGS ${COMMON_CMAKE_ARGS})
-       
+
     ExternalProject_Add(
         tiff
         URL ${CACHED_URL}
@@ -36,7 +36,7 @@ if(WIN32 OR ANDROID)
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS ${TIFF_CMAKE_ARGS}
     )
-    
+
 else()
 
     ExternalProject_Add(

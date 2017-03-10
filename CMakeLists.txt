@@ -30,9 +30,10 @@ if(CROSS_COMPILING)
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/android/clean_all.cmake)
         set(CMAKE_TOOLCHAIN_FILE CACHE FILEPATH "Path to the toolchain file")
     endif()
+
+    # CMAKE_SYSTEM_VERSION=1 disable cmake >3.7 own android support
     list(APPEND COMMON_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-                                  -DANDROID_ABI=${ANDROID_ABI}
-                                  -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL})
+                                  -DCMAKE_SYSTEM_VERSION=1)
 endif()
 
 if(WIN32 OR CMAKE_HOST_WIN32 )
@@ -42,7 +43,7 @@ else()
     set(MAKE $(MAKE))
     if(NOT APPLE)
         # Do not set the runtime path in the install step, this allows to get "portable" libraries
-        list(APPEND COMMON_CMAKE_ARGS 
+        list(APPEND COMMON_CMAKE_ARGS
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
             -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
         )
@@ -68,7 +69,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}" CACHE PATH "I
 include(ProcessorCount)
 ProcessorCount(CPUS_COUNT)
 if(CPUS_COUNT EQUAL 0)
-    # default to 1 if cmake fails  
+    # default to 1 if cmake fails
     set(CPUS_COUNT 1)
 endif()
 
@@ -117,7 +118,7 @@ if(NOT ANDROID)
     list(APPEND SUBDIRECTORIES tetgen)
     list(APPEND SUBDIRECTORIES json-spirit)
     list(APPEND SUBDIRECTORIES glm)
-    
+
     list(APPEND SUBDIRECTORIES opencv)
     list(APPEND SUBDIRECTORIES aruco)
     list(APPEND SUBDIRECTORIES eigen)
@@ -128,7 +129,7 @@ if(NOT ANDROID)
     list(APPEND SUBDIRECTORIES libarchive)
     list(APPEND SUBDIRECTORIES openigtlink)
     list(APPEND SUBDIRECTORIES zeromq)
-    
+
     if(ENABLED_PCL_DEPS)
         if(UNIX)
             list(APPEND SUBDIRECTORIES libusb)
@@ -137,7 +138,7 @@ if(NOT ANDROID)
         if(UNIX)
             list(APPEND SUBDIRECTORIES libfreenect)
         endif()
-        
+
         list(APPEND SUBDIRECTORIES pcl)
     endif()
 
@@ -147,14 +148,14 @@ if(NOT ANDROID)
         endif()
         list(APPEND SUBDIRECTORIES realsense)
     endif()
-    
+
     if(ENABLED_SOFA_DEPS)
         list(APPEND SUBDIRECTORIES glew)
         if (NOT APPLE)
             list(APPEND SUBDIRECTORIES freeglut)
         endif()
         list(APPEND SUBDIRECTORIES sofa)
-    endif()    
+    endif()
 
     if(ENABLED_OGRE_DEPS)
         list(APPEND SUBDIRECTORIES zzip)
@@ -181,11 +182,11 @@ else()
     list(APPEND SUBDIRECTORIES expat)
     list(APPEND SUBDIRECTORIES boost)
     list(APPEND SUBDIRECTORIES freetype)
-    
+
     if(ENABLE_QT_ANDROID)
         list(APPEND SUBDIRECTORIES qt)
     endif()
-    
+
     list(APPEND SUBDIRECTORIES vtk)
     list(APPEND SUBDIRECTORIES camp)
     list(APPEND SUBDIRECTORIES ann)
@@ -274,10 +275,10 @@ find_program(PYTHON_EXECUTABLE python ${PATH})
 # if we are building for Android, now we have to reset CMAKE_FIND_ROOT_PATH_MODE_PROGRAM
 if( ANDROID )
     set( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ${TMP_PREVIOUS_CMAKE_FIND_ROOT_PATH_MODE_PROGRAM} )
-endif()      
-    
+endif()
+
 ####################################################################################################################
-#. Install 
+#. Install
 if(APPLE)
     add_custom_target(install_tool
         COMMAND find . -name '*.dylib' -o -name '*.framework' | xargs ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/OSXTools/osx_install_name_tool.py –-progress -a -f -u -p
@@ -292,7 +293,7 @@ add_custom_target(fix_path
 
 ####################################################################################################################
 # CPack related code
-        
+
 install(DIRECTORY ${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_BUILD_TYPE}
         PATTERN "bin/*"
         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -300,7 +301,7 @@ install(DIRECTORY ${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_BUILD_TYPE}
 install(CODE "set(INSTALL_PATH \"${CMAKE_INSTALL_PREFIX}\")")
 install(CODE "set(BUILD_TYPE \"${CMAKE_BUILD_TYPE}\")")
 install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/fix_path.cmake")
-                 
+
 set(CPACK_PACKAGE_VERSION_MAJOR 11)
 set(CPACK_PACKAGE_VERSION_MINOR 0)
 set(CPACK_PACKAGE_VERSION_PATCH 1)
