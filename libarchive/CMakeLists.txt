@@ -15,7 +15,9 @@ set(PATCH_CMD "")
 if(ANDROID)
     # For an unknown reason the android include files are not added to include path.
     # simply copy it near the cpp files that require it, so we don't have to add an painful patch
-    set(PATCH_CMD ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h <SOURCE_DIR>/libarchive)
+    set(PATCH_CMD ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h <SOURCE_DIR>/libarchive
+        COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/android-linux.diff -d <SOURCE_DIR>
+        )
 endif()
 
 if(UNIX)
