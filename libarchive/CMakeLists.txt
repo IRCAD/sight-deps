@@ -8,23 +8,21 @@ set(LIBARCHIVE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                           -DENABLE_TEST:BOOL=OFF
 )
 
-set(CACHED_URL http://www.libarchive.org/downloads/libarchive-3.1.2.zip)
+set(CACHED_URL http://www.libarchive.org/downloads/libarchive-3.3.1.zip)
 
 set(PATCH_CMD "")
 
 if(ANDROID)
-    list(APPEND LIBARCHIVE_CMAKE_ARGS 
-        -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL}
-    )
-    set(PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/libarchive_android.diff -d <SOURCE_DIR>)
-
+    # For an unknown reason the android include files are not added to include path.
+    # simply copy it near the cpp files that require it, so we don't have to add an painful patch
+    set(PATCH_CMD ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h <SOURCE_DIR>/libarchive)
 endif()
 
 if(UNIX)
     list(APPEND LIBARCHIVE_CMAKE_ARGS -DENABLE_ICONV:BOOL=OFF -DENABLE_EXPAT:BOOL=ON)
     set(LIBARCHIVE_DEPENDS zlib expat libxml)
 elseif(WIN32)
-    list(APPEND LIBARCHIVE_CMAKE_ARGS -DENABLE_ICONV:BOOL=ON 
+    list(APPEND LIBARCHIVE_CMAKE_ARGS -DENABLE_ICONV:BOOL=ON
                                       -DENABLE_EXPAT:BOOL=OFF
                                       -DCMAKE_C_FLAGS_DEBUG:STRING=/W2
     )
@@ -35,7 +33,7 @@ endif()
 ExternalProject_Add(
     libarchive
     URL ${CACHED_URL}
-    URL_HASH SHA256=2e14b48e520524317927baf991998e01bb2ecd6bd181cda34e41bfc8b010acfb
+    URL_HASH SHA256=2af56ff8428c8e896df98325509b361ce5d1328e2f0c1fcdc6bb38e24875f83b
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DEPENDS ${LIBARCHIVE_DEPENDS}
     PATCH_COMMAND ${PATCH_CMD}
@@ -44,10 +42,10 @@ ExternalProject_Add(
 )
 if(WIN32)
     ExternalProject_Add_Step(libarchive ZlibCopy
-        COMMAND ${CMAKE_COMMAND} -E copy 
-                ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll 
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll
                 ${CMAKE_CURRENT_BINARY_DIR}/libarchive-prefix/src/libarchive-build/${ZLIB_LIB_NAME}.dll
-        DEPENDEES download 
+        DEPENDEES download
         COMMENT "Copy ZLib"
     )
 endif()
