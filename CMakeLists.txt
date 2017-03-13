@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.7)
 
 project(BinPkgs)
 
@@ -14,26 +14,12 @@ set(COMMON_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                       -DCMAKE_LINKER=${CMAKE_LINKER}
 )
 
+if(CMAKE_CROSSCOMPILING)
+    list(APPEND COMMON_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
+endif()
+
 if(NOT WIN32 AND NOT APPLE)
     set(SET_COMPILER_ENV export CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} &&)
-endif()
-
-
-if( ANDROID )
-    set(CROSS_COMPILING ON CACHE BOOL "Cross compilation option")
-else()
-    set(CROSS_COMPILING OFF CACHE BOOL "Cross compilation option")
-endif()
-
-if(CROSS_COMPILING)
-    if(NOT CMAKE_TOOLCHAIN_FILE)
-        execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/android/clean_all.cmake)
-        set(CMAKE_TOOLCHAIN_FILE CACHE FILEPATH "Path to the toolchain file")
-    endif()
-
-    # CMAKE_SYSTEM_VERSION=1 disable cmake >3.7 own android support
-    list(APPEND COMMON_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-                                  -DCMAKE_SYSTEM_VERSION=1)
 endif()
 
 if(WIN32 OR CMAKE_HOST_WIN32 )
