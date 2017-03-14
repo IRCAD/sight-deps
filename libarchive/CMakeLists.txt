@@ -57,3 +57,12 @@ ExternalProject_Add_Step(libarchive CopyConfigFileToInstall
     COMMENT "Install configuration file"
     DEPENDEES install
 )
+
+if(ANDROID)
+    ExternalProject_Add_Step(libarchive CopyAndroidHeader
+        COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h ${CMAKE_INSTALL_PREFIX}/include
+        COMMENT "Install missing android header file"
+        DEPENDEES install
+    )
+endif()
+
