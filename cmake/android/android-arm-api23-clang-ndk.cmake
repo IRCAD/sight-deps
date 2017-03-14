@@ -1,6 +1,7 @@
 # Find Android NDK
 if(DEFINED ENV{ANDROID_NDK})
     set(ANDROID_NDK "$ENV{ANDROID_NDK}" CACHE PATH "Path to the Android NDK")
+    file(TO_CMAKE_PATH "${ANDROID_NDK}" ANDROID_NDK)
 else()
     message(FATAL_ERROR "Can not find android NDK path, please set the path in env var 'ANDROID_NDK'")
 endif()
