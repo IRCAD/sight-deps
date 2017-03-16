@@ -7,7 +7,6 @@ else()
 endif()
 
 # As seen at https://cmake.org/cmake/help/v3.7/manual/cmake-toolchains.7.html#cross-compiling-for-android
-set(CMAKE_CROSSCOMPILING TRUE)
 set(CMAKE_SYSTEM_NAME Android)
 set(CMAKE_SYSTEM_VERSION 23)
 set(CMAKE_ANDROID_ARCH_ABI armeabi-v7a)
