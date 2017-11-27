@@ -65,6 +65,7 @@ if(NOT ANDROID)
         -DModule_vtkIOLegacy:BOOL=ON
         -DModule_vtkIOGeometry:BOOL=ON
         -DModule_vtkIOPLY:BOOL=ON  # request for PCL
+        -DModule_vtkRenderingExternal:BOOL=ON
     )
 
     if(CMAKE_SYSTEM_NAME STREQUAL Linux)
