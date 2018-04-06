@@ -4,8 +4,8 @@ project(ogre)
 
 include(ExternalProject)
 
-set(CACHED_URL https://github.com/fw4spl-org/ogre/archive/fix/gl_stencil_buffer.zip)
-set(OGRE_HASH 8906b18e83c3bf26cf405efb447bd4e2175d57af7425372eb530ba4af8f1fd69)
+set(CACHED_URL https://github.com/fw4spl-org/ogre/archive/fix-cocoa-window-size-getter.zip)
+set(OGRE_HASH 53ac5af84568e76f374c4337e6ddfb68d6bb1fc93b36164f6120f1f978a0813d)
 
 include( ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-boost.cmake )
 
@@ -32,11 +32,13 @@ set(OGRE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                     -DOGRE_BUILD_PLATFORM_APPLE_IOS:BOOL=OFF
                     -DOGRE_BUILD_COMPONENT_HLMS:BOOL=OFF
                     -DOGRE_BUILD_COMPONENT_TERRAIN:BOOL=OFF
-                    -DOGRE_BUILD_COMPONENT_RTSHADERS:BOOL=OFF
+                    -DOGRE_BUILD_COMPONENT_RTSHADERSYSTEM:BOOL=OFF
                     -DOGRE_BUILD_COMPONENT_VOLUME:BOOL=OFF
-                    -DOGRE_USE_STD11:BOOL=OFF # Do not compile yet with clang
-                    -DOGRE_CONFIG_THREAD_PROVIDER:STRING=boost
+                    -DOGRE_BUILD_COMPONENT_BITES:BOOL=OFF
+                    -DOGRE_USE_STD11:BOOL=ON
+                    -DOGRE_CONFIG_THREAD_PROVIDER:STRING=std
                     -DOGRE_BUILD_LIBS_AS_FRAMEWORKS=OFF # No, we don't want framework, even on macOS
+                    -DOGRE_NODE_STORAGE_LEGACY=OFF
    )
 
 set(OGRE_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
@@ -44,6 +46,7 @@ set(OGRE_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
 if(APPLE)
     list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/macos_paths.diff -d <SOURCE_DIR>)
     list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/macos_libc++.diff -d <SOURCE_DIR>)
+    list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/macos_ninja.diff -d <SOURCE_DIR>)
 endif()
 
 if(WIN32)
@@ -61,7 +64,7 @@ ExternalProject_Add(
     URL ${CACHED_URL}
     URL_HASH SHA256=${OGRE_HASH}
     DOWNLOAD_DIR ${ARCHIVE_DIR}
-    DOWNLOAD_NAME v1.10.9rc-fw4spl.tar.gz
+    DOWNLOAD_NAME ogre-1.10.11+fix-layout-location-parsing-with-interpolation.zip
     DEPENDS ${OGRE_DEPENDS}
     PATCH_COMMAND ${OGRE_PATCH_CMD}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

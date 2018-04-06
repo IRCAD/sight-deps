@@ -4,7 +4,7 @@ project(pclBuilder)
 
 include(ExternalProject)
 
-set(CACHED_URL https://github.com/PointCloudLibrary/pcl/archive/pcl-1.8.1.tar.gz)
+set(CACHED_URL https://github.com/PointCloudLibrary/pcl/archive/9dae1eaa6750932db23d157cd624ef61ccd5544f.tar.gz)
 
 include( ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-boost.cmake )
 
@@ -48,6 +48,8 @@ set(PCL_CMAKE_ARGS      ${COMMON_CMAKE_ARGS}
                         -DWITH_ENSENSO:BOOL=OFF
                         -DWITH_OPENNI:BOOL=OFF
                         -DWITH_RSSDK:BOOL=OFF
+                        -DPCL_ENABLE_SSE:BOOL=${ENABLE_SSE_SUPPORT}
+                        -DWITH_QHULL:BOOL=OFF
 )
 
 set(PCL_DEPENDS eigen boost flann)
@@ -64,7 +66,6 @@ if(NOT ANDROID)
 
     list(APPEND PCL_CMAKE_ARGS
         -DBUILD_TESTS:BOOL=OFF
-        -DBUILD_WITH_DEBUG_INFO:BOOL=OFF
         -DOPENNI2_INCLUDE_DIRS:PATH=${CMAKE_INSTALL_PREFIX}/include/openni2
         -DQT_QMAKE_EXECUTABLE:PATH=${CMAKE_INSTALL_PREFIX}/bin/qmake
         -DBUILD_ml:BOOL=ON
@@ -82,16 +83,8 @@ else()
     )
 endif()
 
-#OpenMP
-find_package(OpenMP)
-if(OPENMP_FOUND)
-    list(APPEND PCL_CMAKE_ARGS -DENABLE_OPENMP=ON)
-endif()
-
 #CUDA
 if(ENABLE_PCL_CUDA)
-    find_package(CUDA REQUIRED)
-
     if(MSVC AND (NOT (MSVC_VERSION LESS 1900)))
         # Microsoft Visual Studio 2015 is supported in CUDA version > 8.0
         if(CUDA_VERSION_MAJOR LESS 8)
@@ -105,22 +98,17 @@ if(ENABLE_PCL_CUDA)
                                -DBUILD_gpu_kinfu_large_scale:BOOL=ON
                                -DBUILD_visualization:BOOL=ON
                                -DBUILD_surface:BOOL=ON
-                               -DCUDA_ARCH_BIN:STRING=${FW4SPL_CUDA_ARCHS}
+                               -DCUDA_ARCH_BIN:STRING=${BINPKGS_CUDA_ARCHS}
     )
     if (APPLE)
         list(APPEND PCL_CMAKE_ARGS -DBUILD_gpu_features:BOOL=OFF)
     endif()
-    set(PCL_BUILD_COMMAND ${CMAKE_MAKE_PROGRAM})
     # Workaround error C1041
     if(WIN32)
-        if(${CMAKE_MAKE_PROGRAM} STREQUAL "jom")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FS")
-            list(APPEND PCL_CMAKE_ARGS -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-                                       -DCUDA_PROPAGATE_HOST_FLAGS:BOOL=ON)
-            set(PCL_BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j${NUMBER_OF_PARALLEL_BUILD})
-        endif()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FS")
+        list(APPEND PCL_CMAKE_ARGS -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+                                   -DCUDA_PROPAGATE_HOST_FLAGS:BOOL=ON)
     else()
-        set(PCL_BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j${NUMBER_OF_PARALLEL_BUILD})
         # Clang >= 3.8 is not supported by CUDA 7.5
         if(UNIX AND ${CMAKE_C_COMPILER_ID} STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.7)
             list(APPEND PCL_CMAKE_ARGS -DCUDA_HOST_COMPILER:PATH=/usr/bin/gcc
@@ -131,23 +119,22 @@ if(ENABLE_PCL_CUDA)
 endif()
 
 set(PCL_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-set(PCL_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i "${PCL_PATCH_DIR}/kinfu.diff" -d "<SOURCE_DIR>")
+set(PCL_PATCH_CMD   "${PATCH_EXECUTABLE}" -p1 -i "${PCL_PATCH_DIR}/kinfu.diff" -d "<SOURCE_DIR>"
+            COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${PCL_PATCH_DIR}/pcl_eigen.diff -d <SOURCE_DIR>
+            COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${PCL_PATCH_DIR}/pcl_gpu_error.diff -d <SOURCE_DIR>
+            COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${PCL_PATCH_DIR}/clang_macos.diff -d <SOURCE_DIR>)
+
 if(ANDROID)
     list (APPEND PCL_PATCH_CMD && "${PATCH_EXECUTABLE}" -p1 -i ${PCL_PATCH_DIR}/pcl_targets.diff -d <SOURCE_DIR>)
-endif()
-if(WIN32)
-    # Fix compilation on Windows for Ensenso grabber
-    list (APPEND PCL_PATCH_CMD && "${PATCH_EXECUTABLE}" -p1 -i ${PCL_PATCH_DIR}/ensenso_grabber.diff -d <SOURCE_DIR>)
 endif()
 
 ExternalProject_Add(
     pcl
     URL ${CACHED_URL}
-    URL_HASH SHA256=5a102a2fbe2ba77c775bf92c4a5d2e3d8170be53a68c3a76cfc72434ff7b9783
+    URL_HASH SHA256=3c14baf073f974a9d351fedc04c333049fc91b2070733ecc0ac0595e462a1b1e
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DEPENDS ${PCL_DEPENDS}
     PATCH_COMMAND ${PCL_PATCH_CMD}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${PCL_CMAKE_ARGS}
-    BUILD_COMMAND ${PCL_BUILD_COMMAND}
 )

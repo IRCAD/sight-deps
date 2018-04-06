@@ -7,15 +7,9 @@ INCLUDE(ExternalProject)
 set(CACHED_URL https://github.com/zeromq/zeromq4-x/archive/v4.0.5.tar.gz)
 
 set(ZEROMQ_CMAKE_ARGS ${COMMON_CMAKE_ARGS} )
-
-if(WIN32)
-    list(APPEND ZEROMQ_CMAKE_ARGS
-        -DBUILD_SHARED:BOOL=ON
-        )
-endif()
-
 set(ZEROMQ_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-set(ZMQ_PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/CMakeLists.txt.diff -d <SOURCE_DIR>)
+set(ZMQ_PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/CMakeLists.txt.diff -d <SOURCE_DIR>
+              COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/clean_install.diff -d <SOURCE_DIR>)
 
 ExternalProject_Add(
     zeromq
@@ -28,17 +22,16 @@ ExternalProject_Add(
     CMAKE_ARGS ${ZEROMQ_CMAKE_ARGS}
 )
 
-ExternalProject_Add_Step(zeromq CPP_ZEROMQ
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ZEROMQ_PATCH_DIR}/cpp-zeromq ${CMAKE_INSTALL_PREFIX}/include/
-        DEPENDEES build
-        DEPENDERS install
-    )
+fwInstallFile(
+    BINPKG zeromq
+    SRC ${ZEROMQ_PATCH_DIR}/cpp-zeromq/zmq.hpp
+    DEST ${CMAKE_INSTALL_PREFIX}/include/zmq.hpp
+)
 
-
-ExternalProject_Add_Step(zeromq CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/findBinpkgs/FindZEROMQ.cmake ${CMAKE_INSTALL_PREFIX}/FindZEROMQ.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG zeromq
+    SRC ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/findBinpkgs/FindZEROMQ.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/FindZEROMQ.cmake
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")

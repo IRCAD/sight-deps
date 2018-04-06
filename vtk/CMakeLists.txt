@@ -159,6 +159,7 @@ set(VTK_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${VTK_PATCH_DIR}/IO_Import_CMakeL
           COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${VTK_PATCH_DIR}/optimization.diff -d <SOURCE_DIR>
           COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${VTK_PATCH_DIR}/CMakeLists_glew.diff -d <SOURCE_DIR>
           COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${VTK_PATCH_DIR}/QVTKOpenGLWidget.diff -d <SOURCE_DIR>
+          COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${VTK_PATCH_DIR}/offscreen_size_windows.diff -d <SOURCE_DIR>
           )
 
 if(ANDROID)
@@ -174,13 +175,11 @@ set(VTK_CONFIGURE_CMD ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} ${VTK_CMAKE_ARGS} $
 ExternalProject_Add(
     vtk
     URL ${CACHED_URL}
-    URL_HASH SHA256=${VTK_HASHSUM}
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     PATCH_COMMAND ${VTK_PATCH_CMD}
     DEPENDS glew ${VTK_DEPENDS}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CONFIGURE_COMMAND ${VTK_CONFIGURE_CMD}
-    BUILD_COMMAND ${MAKE} ${VTK_SRC_DIR}
 )
 
 if (ANDROID)
@@ -193,8 +192,8 @@ if (ANDROID)
     )
 endif()
 
-ExternalProject_Add_Step(vtk CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-VTK.cmake ${CMAKE_INSTALL_PREFIX}/fw-VTK.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG vtk
+    SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-VTK.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/fw-VTK.cmake
 )

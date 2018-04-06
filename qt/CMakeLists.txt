@@ -4,8 +4,8 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.9/5.9.1/single/qt-everywhere-opensource-src-5.9.1.tar.xz")
-set(QT5_HASHSUM 7b41a37d4fe5e120cdb7114862c0153f86c07abbec8db71500443d2ce0c89795)
+set(QT5_URL "http://download.qt.io/official_releases/qt/5.9/5.9.4/single/qt-everywhere-opensource-src-5.9.4.tar.xz")
+set(QT5_HASHSUM e3acd9cbeafba3aed9f14592f4d70bf0b255e0203943e8d2b4235002268274d5)
 
 set(CACHED_URL ${QT5_URL})
 
@@ -55,14 +55,14 @@ if(APPLE)
      )
 endif()
 
-ExternalProject_Add_Step(qt CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG qt
+    SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
 )
 
-ExternalProject_Add_Step(qt CopyFonts
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/fonts ${CMAKE_INSTALL_PREFIX}/lib/fonts
-    COMMENT "Install fonts"
-    DEPENDEES install
+fwInstallDir(
+    BINPKG qt
+    SRC ${CMAKE_CURRENT_SOURCE_DIR}/fonts
+    DEST ${CMAKE_INSTALL_PREFIX}/lib/fonts
 )
