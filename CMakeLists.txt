@@ -207,6 +207,7 @@ if(NOT ANDROID)
     if(ENABLE_LIBSGM)
         list(APPEND SUBDIRECTORIES libSGM)
     endif()
+    list(APPEND SUBDIRECTORIES dcmqi)
 
 ##ANDROID DEPS##
 else()
