@@ -1,0 +1,125 @@
+From 39187b0e1047baac0a0a73ca71b7af53e54c0819 Mon Sep 17 00:00:00 2001
+From: Julien Waechter <julien.waechter@gmail.com>
+Date: Mon, 23 Apr 2018 16:39:37 +0200
+Subject: [PATCH] feat(install): add install target for lib dcmqi
+
+---
+ CMake/FindJSONCPP.cmake | 30 ++++++++++++++++++++++++++++++
+ CMakeLists.txt          | 11 +++--------
+ libsrc/CMakeLists.txt   | 18 ++++++++++++++++--
+ 3 files changed, 49 insertions(+), 10 deletions(-)
+ create mode 100644 CMake/FindJSONCPP.cmake
+
+diff --git a/CMake/FindJSONCPP.cmake b/CMake/FindJSONCPP.cmake
+new file mode 100644
+index 0000000..ddd4ff9
+--- /dev/null
++++ b/CMake/FindJSONCPP.cmake
+@@ -0,0 +1,30 @@
++# Variables used by this module, they can change the default behavior and need
++# to be set before calling find_package:
++#
++# JsonCpp_ROOT_DIR Set this variable to the root installation of
++# JsonCpp if the module has problems finding
++# the proper installation path.
++#
++# Variables defined by this module:
++#
++# JSONCPP_FOUND System has JsonCpp libs/headers
++# JsonCpp_LIBRARIES The JsonCpp libraries
++# JsonCpp_INCLUDE_DIR The location of JsonCpp headers
++
++find_path(JsonCpp_INCLUDE_DIR
++    NAMES
++        include/json.h
++        include/json/json.h
++)
++
++find_library(JsonCpp_LIBRARY
++    NAMES jsoncpp libjsoncpp JsonCpp
++    HINTS ${JsonCpp_ROOT_DIR}/lib
++)
++
++include(FindPackageHandleStandardArgs)
++
++find_package_handle_standard_args(JsonCpp DEFAULT_MSG
++    JsonCpp_LIBRARY
++    JsonCpp_INCLUDE_DIR
++)
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ae3adab..208523e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -236,14 +236,9 @@ if(DCMQI_BUILD_SLICER_EXTENSION)
+ endif()
+ 
+ # JsonCpp
+-set(_msg "Checking if using built-in JsonCpp")
+-message(STATUS ${_msg})
+-if(EXISTS "${JsonCpp_LIBRARY}" AND EXISTS "${JsonCpp_INCLUDE_DIR}")
+-  set(DCMQI_BUILTIN_JSONCPP 0)
+-  message(STATUS "${_msg} - no")
+-else()
+-  set(DCMQI_BUILTIN_JSONCPP 1)
+-  message(STATUS "${_msg} - yes")
++option(DCMQI_BUILTIN_JSONCPP "Using built-in JsonCpp" ON)
++if(NOT DCMQI_BUILTIN_JSONCPP)
++    find_package(JsonCpp REQUIRED)
+ endif()
+ mark_as_superbuild(JsonCpp_INCLUDE_DIR:PATH)
+ mark_as_superbuild(JsonCpp_LIBRARY:FILEPATH)
+diff --git a/libsrc/CMakeLists.txt b/libsrc/CMakeLists.txt
+index c006c73..70d2887 100644
+--- a/libsrc/CMakeLists.txt
++++ b/libsrc/CMakeLists.txt
+@@ -1,5 +1,7 @@
+ 
+ #-----------------------------------------------------------------------------
++option(BUILD_SHARED_LIBS "Build shared libraries." OFF)
++
+ set(ADDITIONAL_SRCS)
+ 
+ set(INCLUDE_DIR ../include/dcmqi)
+@@ -12,7 +14,7 @@ set(HDRS
+   ${INCLUDE_DIR}/Exceptions.h
+   ${INCLUDE_DIR}/framesorter.h
+   ${INCLUDE_DIR}/ImageSEGConverter.h
+-  ${INCLUDE_DIR}/ParaMapConverter
++  ${INCLUDE_DIR}/ParaMapConverter.h
+   ${INCLUDE_DIR}/Helper.h
+   ${INCLUDE_DIR}/JSONMetaInformationHandlerBase.h
+   ${INCLUDE_DIR}/JSONParametricMapMetaInformationHandler.h
+@@ -43,12 +45,16 @@ endif()
+ 
+ set(lib_name dcmqi)
+ 
+-add_library(${lib_name} STATIC
++add_library(${lib_name}
+   ${HDRS}
+   ${SRCS}
+   ${ADDITIONAL_SRCS}
+   )
+ 
++if(WIN32 AND BUILD_SHARED_LIBS)
++  set_target_properties(${lib_name} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++endif()
++
+ if(DCMQI_LIBRARY_PROPERTIES)
+   set_target_properties(${lib_name} PROPERTIES ${DCMQI_LIBRARY_PROPERTIES})
+ endif()
+@@ -75,3 +81,11 @@ target_link_libraries(${lib_name} PUBLIC
+   ${ITK_LIBRARIES}
+   $<$<NOT:$<BOOL:${DCMQI_BUILTIN_JSONCPP}>>:${JsonCpp_LIBRARY}>
+   )
++
++set_target_properties(${lib_name} PROPERTIES PUBLIC_HEADER "${HDRS}")
++install(TARGETS ${lib_name}
++  RUNTIME DESTINATION bin
++  LIBRARY DESTINATION lib
++  ARCHIVE DESTINATION lib
++  PUBLIC_HEADER DESTINATION include/dcmqi
++  )
+\ No newline at end of file
+-- 
+2.16.1.windows.4
+
