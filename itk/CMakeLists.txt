@@ -17,6 +17,7 @@ set(ITK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                    -DITK_USE_SYSTEM_TIFF:BOOL=ON
                    -DITK_USE_SYSTEM_ZLIB:BOOL=ON
                    -DITK_USE_SYSTEM_JPEG:BOOL=ON
+                   -DITK_USE_GPU:BOOL=ON
 
                    -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF
                    -DModule_ITKDeprecated:BOOL=OFF
