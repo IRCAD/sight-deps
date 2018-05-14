@@ -37,7 +37,7 @@ set(QT_CONFIGURE_CMD ./configure
 
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_qt}")
 
-set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/fix-gst-webcams.diff -d <SOURCE_DIR>)
+#set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/fix-gst-webcams.diff -d <SOURCE_DIR>)
 
 ExternalProject_Add(
     qt
@@ -45,7 +45,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     URL_HASH SHA256=${QT5_HASHSUM}
     BUILD_IN_SOURCE 1
-    PATCH_COMMAND ${QT_PATCH_CMD}
+    #PATCH_COMMAND ${QT_PATCH_CMD}
     CONFIGURE_COMMAND ${QT_CONFIGURE_CMD}
     BUILD_COMMAND ${MAKE}
     INSTALL_COMMAND ${MAKE} -f Makefile ${INSTALL_ROOT} install
