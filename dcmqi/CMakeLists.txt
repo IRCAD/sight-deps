@@ -14,6 +14,7 @@ set(DCMQI_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                     -DDCMQI_BUILTIN_JSONCPP:BOOL=OFF
                     -DDCMTK_DIR:PATH=${CMAKE_INSTALL_PREFIX}/cmake
                     -DSlicerExecutionModel_DIR_CONFIG:PATH=${CMAKE_INSTALL_PREFIX}
+                    -DCMAKE_CXX_STANDARD=11
 )
 
 set(DCMQI_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
