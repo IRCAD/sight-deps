@@ -4,8 +4,8 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.10/5.10.1/single/qt-everywhere-src-5.10.1.tar.xz")
-set(QT5_HASHSUM 05ffba7b811b854ed558abf2be2ddbd3bb6ddd0b60ea4b5da75d277ac15e740a)
+set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.0/single/qt-everywhere-src-5.11.0.tar.xz")
+set(QT5_HASHSUM 67ddb8bf33bbfd19ebc641467ccce2e57fd0b80c6082457f1f5a76e8df83c865)
 
 set(CACHED_URL ${QT5_URL})
 
@@ -28,9 +28,6 @@ set(QT_SKIP_MODULES_LIST
     -skip qtwayland
     -skip qtwebchannel
     -skip qtwebsockets
-    -skip qtcanvas3d
-    -skip qtgraphicaleffects
-    -skip qtscript
     -skip qtserialport
     -skip qtdoc
     -skip qtlocation)
