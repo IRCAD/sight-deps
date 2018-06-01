@@ -1,0 +1,48 @@
+diff -uNr a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2017-03-13 15:58:09.216847479 +0100
++++ b/CMakeLists.txt	2017-03-13 15:59:39.980173391 +0100
+@@ -96,7 +96,7 @@
+   #################################################################
+   # Set compile flags for debug build.
+   # This is added into CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+-  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Werror")
++  #SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Werror")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wextra")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wunused")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wshadow")
+@@ -112,7 +112,7 @@
+   # Set compile flags for debug build.
+   # This is added into CMAKE_C_FLAGS when CMAKE_BUILD_TYPE is "Debug"
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+-  SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Werror")
++  #SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Werror")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wextra")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wunused")
+   SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wshadow")
+@@ -454,7 +454,7 @@
+ # Find LZMA
+ #
+ IF(ENABLE_LZMA)
+-  FIND_PACKAGE(LibLZMA)
++  FIND_PACKAGE(LibLZMA NO_CMAKE_SYSTEM_PATH)
+ ELSE()
+   SET(LIBZMA_FOUND FALSE) # Override cached value
+ ENDIF()
+@@ -644,7 +644,7 @@
+ # Find Nettle
+ #
+ IF(ENABLE_NETTLE)
+-  FIND_PACKAGE(Nettle)
++  FIND_PACKAGE(Nettle NO_CMAKE_SYSTEM_PATH)
+   IF(NETTLE_FOUND)
+     SET(HAVE_LIBNETTLE 1)
+     LIST(APPEND ADDITIONAL_LIBS ${NETTLE_LIBRARIES})
+@@ -668,7 +668,7 @@
+ # (Except on Mac, where OpenSSL is deprecated.)
+ #
+ IF(ENABLE_OPENSSL AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+-  FIND_PACKAGE(OpenSSL)
++  FIND_PACKAGE(OpenSSL NO_CMAKE_SYSTEM_PATH)
+   IF(OPENSSL_FOUND)
+     SET(HAVE_LIBCRYPTO 1)
+     INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})

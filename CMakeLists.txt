@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.6)
 
 project(BinPkgs)
 
@@ -31,25 +31,30 @@ set(COMMON_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
 )
 
+if(CMAKE_CROSSCOMPILING)
+    list(APPEND COMMON_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
+endif()
+
 if(NOT WIN32 AND NOT APPLE)
     set(SET_COMPILER_ENV export CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} &&)
 endif()
 
-
-if( ANDROID )
-    set(CROSS_COMPILING ON CACHE BOOL "Cross compilation option")
+if(WIN32 OR CMAKE_HOST_WIN32 )
+    set(MAKE nmake)
 else()
-    set(CROSS_COMPILING OFF CACHE BOOL "Cross compilation option")
-endif()
-
-if(CROSS_COMPILING)
-    if(NOT CMAKE_TOOLCHAIN_FILE)
-        execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/android/clean_all.cmake)
-        set(CMAKE_TOOLCHAIN_FILE CACHE FILEPATH "Path to the toolchain file")
+    # This important to use '$(MAKE)' and not just 'make' to forward the flags from the command line (-j for instance)
+    set(MAKE $(MAKE))
+    if(NOT APPLE)
+        # Do not set the runtime path in the install step, this allows to get "portable" libraries
+        list(APPEND COMMON_CMAKE_ARGS
+            -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
+            -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
+        )
+    else()
+        list(APPEND COMMON_CMAKE_ARGS
+            -DCMAKE_MACOSX_RPATH:BOOL=ON
+        )
     endif()
-    list(APPEND COMMON_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-                                  -DANDROID_ABI=${ANDROID_ABI}
-                                  -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL})
 endif()
 
 set(ARCHIVE_DIR ${CMAKE_SOURCE_DIR}/archive CACHE PATH "Archive directory")
@@ -335,15 +340,18 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/BinPkgsConfig.cmake cmake/utils/find_s
 
 ####################################################################################################################
 # CPack related code
-install(CODE "set(HOST_INSTALL_PATH \"${CMAKE_INSTALL_PREFIX}\")")
-install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/cpack_install.cmake")
+
+install(DIRECTORY ${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_BUILD_TYPE}
+        PATTERN "bin/*"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+install(CODE "set(INSTALL_PATH \"${CMAKE_INSTALL_PREFIX}\")")
+install(CODE "set(BUILD_TYPE \"${CMAKE_BUILD_TYPE}\")")
 install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/fix_path.cmake")
 
-include(${CMAKE_SOURCE_DIR}/cmake/utils/get_git_rev.cmake)
-set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_TAG_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${GIT_TAG_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${GIT_TAG_PATCH})
-set(CPACK_PACKAGE_NAME ${PROJECT_NAME}-${CMAKE_BUILD_TYPE})
+set(CPACK_PACKAGE_VERSION_MAJOR 11)
+set(CPACK_PACKAGE_VERSION_MINOR 0)
+set(CPACK_PACKAGE_VERSION_PATCH 1)
 set(CPACK_PACKAGE_VENDOR "IRCAD/IHU")
 if(APPLE)
     # Mac OS X has some problems with tgz archive, so we use zip generator.

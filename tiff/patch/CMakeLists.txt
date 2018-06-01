@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 2.8.6)
 project(libtiff C)
 
-find_package(JPEG REQUIRED)
-if(NOT JPEG_FOUND)
-    message(FATAL_ERROR "JPEG not found !")
+if(ANDROID)
+    set(JPEG_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libjpeg.so)
+    set(JPEG_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+else()
+    find_package(JPEG REQUIRED)
 endif()
 
 find_package(ZLIB REQUIRED)
-if(NOT ZLIB_FOUND)
-    message(FATAL_ERROR "ZLIB not found !")
-endif()
 
 if(ANDROID)
   find_library(M_LIBRARY
@@ -18,11 +17,11 @@ if(ANDROID)
   )
 endif()
 
-set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin" 
+set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin"
     CACHE PATH "Installation directory for executables")
-set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" 
+set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib"
     CACHE PATH "Installation directory for libraries")
-set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include" 
+set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include"
     CACHE PATH "Installation directory for headers")
 
 if(WIN32 OR ANDROID)
@@ -87,7 +86,7 @@ set(LIBTIFF_SRC
     libtiff/tif_warning.c
     libtiff/tif_write.c
     libtiff/tif_zip.c
-    
+
 )
 
 if(WIN32)
@@ -106,7 +105,7 @@ add_definitions(-DZIP_SUPPORT -DJPEG_SUPPORT)
 
 add_library(tiff SHARED ${LIBTIFF_SRC} libtiff/libtiff.def)
 target_link_libraries(tiff ${JPEG_LIBRARY} ${ZLIB_LIBRARY} ${M_LIBRARY})
-   
+
 install(TARGETS tiff
         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
