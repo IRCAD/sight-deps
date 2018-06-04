@@ -30,6 +30,7 @@ if(ANDROID)
     # Android doesn't need to link with pThread lib so we need to remove it from target link library
     list(APPEND PATCH_CMD
         COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/android_pthread.diff -d <SOURCE_DIR>
+	COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/android_math.diff -d <SOURCE_DIR>
     )
 endif()
 

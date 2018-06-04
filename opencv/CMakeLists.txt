@@ -124,9 +124,9 @@ if(NOT ANDROID)
     )
 endif()
 
-set(OPENCV_HASHSUM b9d62dfffb8130d59d587627703d5f3e6252dce4a94c1955784998da7a39dd35)
-set(OPENCV_NAME "opencv_3.2.0.tar.gz")
-set(CACHED_URL https://github.com/opencv/opencv/archive/3.2.0.tar.gz)
+set(OPENCV_HASHSUM 678cc3d2d1b3464b512b084a8cca1fad7de207c7abdf2caa1fed636c13e916da)
+set(OPENCV_NAME "opencv_3.4.0.tar.gz")
+set(CACHED_URL https://github.com/opencv/opencv/archive/3.4.0.tar.gz)
 
 ExternalProject_Add(
     opencv

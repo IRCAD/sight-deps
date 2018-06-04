@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.6)
 
 project(BinPkgs)
 
@@ -93,7 +93,6 @@ if(NOT ANDROID)
 
     list(APPEND SUBDIRECTORIES qt)
     list(APPEND SUBDIRECTORIES vtk)
-    list(APPEND SUBDIRECTORIES vxl)
     list(APPEND SUBDIRECTORIES gdcm)
     list(APPEND SUBDIRECTORIES itk)
     list(APPEND SUBDIRECTORIES camp)
@@ -179,7 +178,6 @@ else()
     list(APPEND SUBDIRECTORIES json-spirit)
     list(APPEND SUBDIRECTORIES android_native_app)
     list(APPEND SUBDIRECTORIES glm)
-    list(APPEND SUBDIRECTORIES vxl)
     list(APPEND SUBDIRECTORIES opencv)
     list(APPEND SUBDIRECTORIES aruco)
     if(ENABLED_PCL_DEPS)

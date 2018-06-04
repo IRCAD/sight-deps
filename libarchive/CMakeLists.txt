@@ -8,15 +8,18 @@ set(LIBARCHIVE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                           -DENABLE_TEST:BOOL=OFF
 )
 
-set(CACHED_URL http://www.libarchive.org/downloads/libarchive-3.3.1.zip)
+set(CACHED_URL http://www.libarchive.org/downloads/libarchive-3.1.2.zip)
 
 set(PATCH_CMD "")
 
 if(ANDROID)
     # For an unknown reason the android include files are not added to include path.
     # simply copy it near the cpp files that require it, so we don't have to add an painful patch
-    set(PATCH_CMD ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h <SOURCE_DIR>/libarchive
-        COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/android-linux.diff -d <SOURCE_DIR>
+    list(APPEND LIBARCHIVE_CMAKE_ARGS
+        -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL}
+    )
+
+    set(PATCH_CMD COMMAND ${PATCH_EXECUTABLE} -p1 -i ${CMAKE_CURRENT_SOURCE_DIR}/patch/android-linux.diff -d <SOURCE_DIR>
         )
 endif()
 
@@ -35,7 +38,7 @@ endif()
 ExternalProject_Add(
     libarchive
     URL ${CACHED_URL}
-    URL_HASH SHA256=2af56ff8428c8e896df98325509b361ce5d1328e2f0c1fcdc6bb38e24875f83b
+    URL_HASH SHA256=2e14b48e520524317927baf991998e01bb2ecd6bd181cda34e41bfc8b010acfb
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DEPENDS ${LIBARCHIVE_DEPENDS}
     PATCH_COMMAND ${PATCH_CMD}
@@ -57,12 +60,4 @@ ExternalProject_Add_Step(libarchive CopyConfigFileToInstall
     COMMENT "Install configuration file"
     DEPENDEES install
 )
-
-if(ANDROID)
-    ExternalProject_Add_Step(libarchive CopyAndroidHeader
-        COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/contrib/android/include/android_lf.h ${CMAKE_INSTALL_PREFIX}/include
-        COMMENT "Install missing android header file"
-        DEPENDEES install
-    )
-endif()
 
