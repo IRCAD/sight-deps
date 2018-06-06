@@ -16,7 +16,7 @@ if(ANDROID)
     set(LIBXML2_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
         -DXML2_BUILD_SHARED=BOOL:ON
     )
-    
+
     ExternalProject_Add(
         libxml
         URL ${CACHED_URL}
@@ -27,44 +27,45 @@ if(ANDROID)
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS ${LIBXML2_CMAKE_ARGS}
     )
-    
+
 elseif(WIN32)
     set(LIBXML2_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/libxml-prefix/src/libxml)
-    
-    file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} LIBXML_INSTALL_DIR_WIN32)
+
+    file(TO_NATIVE_PATH ${INSTALL_PREFIX_libxml} LIBXML_INSTALL_DIR_WIN32)
     #patch zlib name and prefix
     configure_file(${LIBXML2_PATCH_DIR}/Makefile.msvc.cmake
                    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.msvc @ONLY
     )
-    
+
     set(CONFIGURE_CMD cscript configure.js
                       zlib=yes iconv=yes compiler=msvc
-                      prefix="${CMAKE_INSTALL_PREFIX}"
+                      prefix="${INSTALL_PREFIX_libxml}"
                       include=${CMAKE_INSTALL_PREFIX}/include
                       lib=${CMAKE_INSTALL_PREFIX}/lib
     )
-    if(IS_DEBUG)
+
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         set(CONFIGURE_CMD ${CONFIGURE_CMD} debug=yes cruntime=/MDd)
     else()
         set(CONFIGURE_CMD ${CONFIGURE_CMD} debug=no cruntime=/MD)
     endif()
 
-    
-    
+
+
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2_config.cmake
         "execute_process( COMMAND ${CONFIGURE_CMD} WORKING_DIRECTORY ${LIBXML2_SRC_DIR}/win32 )"
     )
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2_build.cmake 
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2_build.cmake
         "execute_process( COMMAND nmake /f Makefile.msvc WORKING_DIRECTORY ${LIBXML2_SRC_DIR}/win32)"
     )
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2_install.cmake 
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libxml2_install.cmake
         "execute_process( COMMAND nmake /f Makefile.msvc install WORKING_DIRECTORY ${LIBXML2_SRC_DIR}/win32)"
     )
-    
+
     set(LIBXML2_CONFIG_CMD ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/libxml2_config.cmake)
     set(LIBXML2_BUILD_CMD ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/libxml2_build.cmake)
     set(LIBXML2_INSTALL_CMD ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/libxml2_install.cmake)
-      
+
     ExternalProject_Add(
         libxml
         URL ${CACHED_URL}
@@ -77,7 +78,10 @@ elseif(WIN32)
         BUILD_COMMAND ${LIBXML2_BUILD_CMD}
         INSTALL_COMMAND ${LIBXML2_INSTALL_CMD}
     )
-    
+    ExternalProject_Add_Step(libxml COPY_FILES
+        COMMAND ${CMAKE_COMMAND} -D SRC:PATH=${INSTALL_PREFIX_libxml} -D DST:PATH=${CMAKE_INSTALL_PREFIX} -P ${CMAKE_SOURCE_DIR}/Install.cmake
+        DEPENDEES install
+    )
 else()
     set(CONFIGURE_CMD ${SET_COMPILER_ENV} <SOURCE_DIR>/configure
                       --enable-shared --disable-static --without-libintl --enable-extra-encodings
@@ -89,7 +93,8 @@ else()
                       --without-python
                       --prefix=${CMAKE_INSTALL_PREFIX}
     )
-    if(IS_DEBUG)
+
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         set(CONFIGURE_CMD ${CONFIGURE_CMD} --with-debug)
     else()
         set(CONFIGURE_CMD ${CONFIGURE_CMD} --without-debug)
@@ -98,7 +103,7 @@ else()
     if("${CMAKE_SYSTEM}" MATCHES "Linux")
         set(CONFIGURE_CMD ${CONFIGURE_CMD} --with-iconv=${CMAKE_INSTALL_PREFIX})
     endif()
-    
+
 
     if(NOT APPLE)
         set(EXTRA_DEPENDS libiconv)

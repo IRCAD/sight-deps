@@ -15,7 +15,7 @@ else()
 endif()
 
 # qt's configure is not an autotool configure
-set(QT_CONFIGURE_CMD ./configure
+set(QT_CONFIGURE_CMD ./configure.bat
     -shared
     -opensource
     -confirm-license
@@ -26,29 +26,23 @@ set(QT_CONFIGURE_CMD ./configure
     -nomake examples
     -no-fontconfig
     -opengl desktop
-    
-    ${QT_SKIP_MODULES_LIST} 
-    
-    -prefix ${CMAKE_INSTALL_PREFIX}
+    ${QT_SKIP_MODULES_LIST}
+    -prefix ${INSTALL_PREFIX_qt}
     -I ${CMAKE_INSTALL_PREFIX}/include
     -L ${CMAKE_INSTALL_PREFIX}/lib
     -${QT_BUILD_TYPE}
     -I ${CMAKE_INSTALL_PREFIX}/include/icu
-    -arch windows
+    -plugindir ${INSTALL_PREFIX_qt}/bin/qt5/plugins
     -no-angle
-    -c++std c++11
     -platform ${PLATFORM}
-    -l zlib
-    -l jpeg
-    -l png
-    -l freetype
-    -wmf-backend
+    -mediaplayer-backend wmf
+    -mp
+    -silent
 )
 
 #hack: rcc.exe need zlib in path
-set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/configure.patch -d <SOURCE_DIR> 
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qtbase/bin/${ZLIB_LIB_NAME}.dll
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qttools/bin/${ZLIB_LIB_NAME}.dll)
+set(QT_PATCH_CMD ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qtbase/bin/${ZLIB_LIB_NAME}.dll
+         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qttools/bin/${ZLIB_LIB_NAME}.dll)
 
 ExternalProject_Add(
     qt
@@ -61,4 +55,9 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ${QT_CONFIGURE_CMD}
     BUILD_COMMAND ${MAKE_QT} -f Makefile
     INSTALL_COMMAND ${MAKE_QT} -f Makefile install
+)
+
+ExternalProject_Add_Step(qt COPY_FILES
+    COMMAND ${CMAKE_COMMAND} -D SRC:PATH=${INSTALL_PREFIX_qt} -D DST:PATH=${CMAKE_INSTALL_PREFIX} -P ${CMAKE_SOURCE_DIR}/Install.cmake
+    DEPENDEES install
 )

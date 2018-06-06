@@ -18,8 +18,6 @@ if(CMAKE_HOST_WIN32)
 
 else()
 
-    set(QT5_URL "http://download.qt.io/official_releases/qt/5.5/5.5.1/single/qt-everywhere-opensource-src-5.5.1.tar.gz")
-    set(QT5_HASHSUM 59f0216819152b77536cf660b015d784)
     set(ANDROID_SDK_ROOT $ENV{ANDROID_SDK})
     set(ANDROID_API_VERSION "android-${ANDROID_NATIVE_API_LEVEL}")
 
@@ -29,13 +27,13 @@ else()
     else()
         set(SYSTEM ${ANDROID_NDK_HOST_SYSTEM_NAME})
     endif()
-
     set(QT_CONFIGURE_CMD ./configure
         -prefix ${CMAKE_INSTALL_PREFIX}
         -I ${CMAKE_INSTALL_PREFIX}/include
         -L ${CMAKE_INSTALL_PREFIX}/lib
         -${QT_BUILD_TYPE}
         -xplatform android-g++
+	--disable-rpath
         -opensource
         -confirm-license
         -nomake tests
@@ -43,6 +41,7 @@ else()
         -android-ndk $ENV{ANDROID_NDK}
         -android-sdk ${ANDROID_SDK_ROOT}
         -android-toolchain-version ${ANDROID_COMPILER_VERSION}
+	-android-ndk-platform android-21
         -no-warnings-are-errors
         -system-zlib
         -system-freetype
@@ -55,16 +54,7 @@ else()
         -skip qtwayland
         -skip qtwebengine
         -skip qtwebchannel
-        -skip qtwebkit
-        -skip qtwebkit-examples
         -skip qtwebsockets
-        -skip qt3d
-        -skip qtdeclarative
-        -skip qtquick1
-        -skip qtquickcontrols
-        -skip qtcanvas3d
-        -skip qtgraphicaleffects
-        -skip qtscript
         -skip qtwayland
         -skip qtserialport
         -skip qtdoc
@@ -72,10 +62,10 @@ else()
         -skip qtwinextras
         -skip x11extras
         -skip qttools
-
+	-skip qtscript
     )
 
-    set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/android/qlogging.diff -d <SOURCE_DIR>)
+    set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/android/pthread.diff -d <SOURCE_DIR>)
 
     if(CMAKE_HOST_APPLE)
         list(APPEND QT_PATCH_CMD COMMAND ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/xcode8.diff -d <SOURCE_DIR>)

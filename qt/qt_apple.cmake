@@ -9,6 +9,7 @@ set(QT_CONFIGURE_CMD ./configure
     -prefix ${CMAKE_INSTALL_PREFIX}
     -I ${CMAKE_INSTALL_PREFIX}/include
     -L ${CMAKE_INSTALL_PREFIX}/lib
+    -plugindir ${CMAKE_INSTALL_PREFIX}/lib/qt5/plugins
     -${QT_BUILD_TYPE}
     ${QT_SKIP_MODULES_LIST}
 
@@ -27,17 +28,17 @@ set(QT_CONFIGURE_CMD ./configure
     -no-glib
     -no-fontconfig
     -no-xcb
+    
+    -c++std c++11
 )
 
-if(${QT_BUILD_TYPE} STREQUAL "debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND QT_CONFIGURE_CMD
         -no-framework
     )
 endif()
 
-set(QT_PATCH_CMD ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/osxFreetypeFix.patch -d <SOURCE_DIR>/qtbase
-    COMMAND ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/xcode8.diff -d <SOURCE_DIR>
-)
+list(APPEND QT_PATCH_CMD COMMAND ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/fix_xcode_9_3.patch -d <SOURCE_DIR>)
 
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_qt}")
 ExternalProject_Add(

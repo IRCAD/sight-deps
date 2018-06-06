@@ -23,6 +23,8 @@ set(VTK_CMAKE_ARGS
     -DVTK_Group_StandAlone:BOOL=OFF #disabled hdf5 module
 )
 
+message("VTK check = " ${VTK_IGNORE_CMAKE_CXX11_CHECKS})
+
 if(NOT ANDROID)
 
     set(CACHED_URL https://github.com/Kitware/VTK/archive/v7.0.0.tar.gz)

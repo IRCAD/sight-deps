@@ -77,7 +77,7 @@ add_boost_lib(date_time)
 target_link_libraries(boost_date_time boost_system)
 add_boost_lib(chrono)
 target_link_libraries(boost_chrono boost_system)
-add_boost_lib(iostreams -bzip2.cpp)
+add_boost_lib(iostreams -bzip2.cpp -lzma.cpp)
 target_link_libraries(boost_iostreams boost_system z)
 
 add_definitions(
@@ -87,6 +87,7 @@ add_definitions(
     -DBOOST_THREAD_VERSION=2
     -DNO_ZLIB=0
     -DNO_BZIP2=1
+    -DNO_LZMA=1
 )
 
 configure_file(${CMAKE_SOURCE_DIR}/BoostConfig.cmake.in

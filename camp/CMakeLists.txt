@@ -5,9 +5,7 @@ project(campBuilder)
 include(ExternalProject)
 
 include( ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-boost.cmake )
-set(CAMP_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
-                    -DBUILD_DOXYGEN:BOOL=OFF
-)
+set(CAMP_CMAKE_ARGS ${COMMON_CMAKE_ARGS})
 
 if(ANDROID)
     if( ${ANDROID_STL} MATCHES "gnustl_shared" )
@@ -17,21 +15,22 @@ if(ANDROID)
     endif()
 endif()
 
-set(CACHED_URL https://github.com/fw4spl-org/camp/archive/0.7.1.4.zip)
+set(CAMP_VERSION 0.8.2)
+set(CACHED_URL https://github.com/fw4spl-org/camp/archive/${CAMP_VERSION}.zip)
 
 ExternalProject_Add(
     camp
     URL ${CACHED_URL}
-    URL_HASH SHA256=be2e24e6adff4c3bd62746c013943166028f7af75708f77f171c1b936ed02fca
+    URL_HASH SHA256=fef09c13fab437024aa82609c1caab6cc1ad84c788fa31c8d3c9dd7acfebb50b
     DOWNLOAD_DIR ${ARCHIVE_DIR}
-    DOWNLOAD_NAME camp_0.7.1.4.zip
+    DOWNLOAD_NAME camp-${CAMP_VERSION}.zip
     DEPENDS boost
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${CAMP_CMAKE_ARGS}
 )
 
-ExternalProject_Add_Step(camp CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/FindCAMP.cmake ${CMAKE_INSTALL_PREFIX}/FindCAMP.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG camp
+    SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/FindCAMP.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/FindCAMP.cmake
 )

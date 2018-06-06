@@ -4,7 +4,7 @@ project(glewBuilder)
 
 include(ExternalProject)
 
-set(CACHED_URL http://sourceforge.net/projects/glew/files/glew/1.12.0/glew-1.12.0.tgz/download)
+set(CACHED_URL https://sourceforge.net/projects/glew/files/glew/1.12.0/glew-1.12.0.tgz/download )
 
 set(GLEW_CMAKE_ARGS ${COMMON_CMAKE_ARGS} 
         -DGLEW_MX:BOOL=OFF 
@@ -18,7 +18,7 @@ set(GLEW_PATCH_CMD ${CMAKE_COMMAND} -E copy_if_different "${GLEW_PATCH_DIR}/CMak
 ExternalProject_Add(
     glew
     URL ${CACHED_URL}
-    URL_HASH SHA256=af58103f4824b443e7fa4ed3af593b8edac6f3a7be3b30911edbc7344f48e4bf
+    URL_HASH SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     PATCH_COMMAND ${GLEW_PATCH_CMD}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

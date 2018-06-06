@@ -1,0 +1,13 @@
+--- a/qtbase/src/corelib/configure.json	2018-05-14 06:46:28.000000000 +0200
++++ b/qtbase/src/corelib/configure.json	2018-06-05 16:10:33.238135804 +0200
+@@ -277,8 +277,7 @@
+                 "main": [
+                     "std::future<int> f = std::async([]() { return 42; });",
+                     "(void)f.get();"
+-                ],
+-                "qmake": "unix:LIBS += -lpthread"
++                ]
+             }
+         },
+         "cxx11_random": {
+

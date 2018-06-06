@@ -4,17 +4,23 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.7/5.7.0/single/qt-everywhere-opensource-src-5.7.0.tar.gz")
-set(QT5_HASHSUM 4661905915d6265243e17fe59852930a229cf5b054ce5af5f48b34da9112ab5f)
+set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.0/single/qt-everywhere-src-5.11.0.tar.xz")
+set(QT5_HASHSUM 68b7c9dd5c5df84b5c82730474c4c1f3)
 
 set(CACHED_URL ${QT5_URL})
 
-string(TOLOWER "${CMAKE_BUILD_TYPE}" QT_BUILD_TYPE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(QT_BUILD_TYPE debug)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set(QT_BUILD_TYPE release -force-debug-info)
+else()
+    set(QT_BUILD_TYPE release)
+endif()
 
 set(QT_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
 set(QT_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/qt-prefix/src/qt)
 
-set(QT_SKIP_MODULES_LIST 
+set(QT_SKIP_MODULES_LIST
     -skip qtactiveqt
     -skip qtconnectivity
     -skip qtsensors
@@ -23,15 +29,10 @@ set(QT_SKIP_MODULES_LIST
     -skip qtwebengine
     -skip qtwebchannel
     -skip qtwebsockets
-    -skip qtdeclarative
-    -skip qtquickcontrols
-    -skip qtcanvas3d
-    -skip qtgraphicaleffects
-    -skip qtscript
-    -skip qtwayland
     -skip qtserialport
-    -skip qtdoc)
-    
+    -skip qtdoc
+    -skip qtlocation)
+
 if(WIN32)
     include(qt_windows.cmake)
 elseif(APPLE)
@@ -52,14 +53,14 @@ if(APPLE)
      )
 endif()
 
-ExternalProject_Add_Step(qt CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG qt
+    SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
 )
 
-ExternalProject_Add_Step(qt CopyFonts
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/fonts ${CMAKE_INSTALL_PREFIX}/lib/fonts
-    COMMENT "Install fonts"
-    DEPENDEES install
+fwInstallDir(
+    BINPKG qt
+    SRC ${CMAKE_CURRENT_SOURCE_DIR}/fonts
+    DEST ${CMAKE_INSTALL_PREFIX}/lib/fonts
 )

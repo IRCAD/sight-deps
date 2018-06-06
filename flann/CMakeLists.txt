@@ -4,28 +4,26 @@ project(flannBuilder)
 
 include(ExternalProject)
 
-set(CACHED_URL http://people.cs.ubc.ca/~mariusm/uploads/FLANN/flann-1.8.4-src.zip)
+set(CACHED_URL https://github.com/mariusmuja/flann/archive/1.9.1.zip)
 
-set(FLANN_CMAKE_ARGS    ${COMMON_CMAKE_ARGS}
-                        -DBUILD_C_BINDINGS:BOOL=OFF
-                        -DBUILD_MATLAB_BINDINGS:BOOL=OFF
-                        -DBUILD_PYTHON_BINDINGS:BOOL=OFF
+set(FLANN_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
+                     -DBUILD_EXAMPLES:BOOL=OFF
+                     -DBUILD_DOC:BOOL=OFF
+                     -DBUILD_TESTS:BOOL=OFF
+                     -DBUILD_C_BINDINGS:BOOL=OFF
+                     -DBUILD_MATLAB_BINDINGS:BOOL=OFF
+                     -DBUILD_PYTHON_BINDINGS:BOOL=OFF
 )
 
-# Patch to disabled tests and examples (compilation error on win32)
 set(FLANN_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-
-set(FLANN_PATCH_COMMAND  ${CMAKE_COMMAND} -E copy ${FLANN_PATCH_DIR}/CMakeLists.txt ${CMAKE_CURRENT_BINARY_DIR}/flann-prefix/src/flann/CMakeLists.txt)
-set(FLANN_PATCH_COMMAND  ${FLANN_PATCH_COMMAND} 
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FLANN_PATCH_DIR}/serialization.h ${CMAKE_CURRENT_BINARY_DIR}/flann-prefix/src/flann/src/cpp/flann/util/serialization.h)
+set(FLANN_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i "${FLANN_PATCH_DIR}/flann_cmake_311.diff" -d "<SOURCE_DIR>")
 
 ExternalProject_Add(
     flann
     URL ${CACHED_URL}
-    URL_HASH SHA256=dfbb9321b0d687626a644c70872a2c540b16200e7f4c7bd72f91ae032f445c08
+    URL_HASH SHA256=45420be368a76d1ea1d4337e8bd9b031d75a1abc01a1120a7ab9ea72a922e45f
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${FLANN_CMAKE_ARGS}
-    PATCH_COMMAND ${FLANN_PATCH_COMMAND}
+    PATCH_COMMAND ${FLANN_PATCH_CMD}
 )
-

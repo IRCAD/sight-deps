@@ -9,9 +9,6 @@ set(CACHED_URL https://github.com/fw4spl-org/librealsense/archive/v0.9.1.1.tar.g
 set(REALSENSE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                          -DBUILD_EXAMPLES=OFF
 )
-if(UNIX)
-    set(REALSENSE_DEPENDS libusb)
-endif()
 
 ExternalProject_Add(
     realsense
@@ -24,10 +21,9 @@ ExternalProject_Add(
     CMAKE_ARGS ${REALSENSE_CMAKE_ARGS}
 )
 
-ExternalProject_Add_Step(realsense CopyConfigFileToInstall
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/findBinpkgs/Findlibrealsense.cmake ${CMAKE_INSTALL_PREFIX}/Findlibrealsense.cmake
-    COMMENT "Install configuration file"
-    DEPENDEES install
+fwInstallFile(
+    BINPKG realsense
+    SRC ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/findBinpkgs/Findlibrealsense.cmake
+    DEST ${CMAKE_INSTALL_PREFIX}/Findlibrealsense.cmake
 )
-
 
