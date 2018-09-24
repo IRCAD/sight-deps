@@ -41,31 +41,35 @@ if(NOT PATCH_EXECUTABLE)
         if(CMAKE_HOST_WIN32 OR WIN32)
         
             # make sure the patch does not exist, and that we missed it by error
-            if(EXISTS "${CMAKE_BINARY_DIR}/patch/msysgit-Git-1.9.5-preview20150319/bin/patch.exe") 
-                message(FATAL_ERROR "File ${CMAKE_BINARY_DIR}/patch/msysgit-Git-1.9.5-preview20150319/bin/patch.exe exists but var PATCH_EXECUTABLE was still not set")
-            endif()
-        
-            #download git-patch for Windows
-            message(STATUS "Downloading git-patch for Windows")
-            set(PATCH_URL https://github.com/msysgit/msysgit/archive/Git-1.9.5-preview20150319.tar.gz)
-            file(DOWNLOAD ${PATCH_URL} ${CMAKE_BINARY_DIR}/patch/Git-1.9.5-preview20150319.tar.gz
-                 SHOW_PROGRESS
-                 EXPECTED_MD5 297d65910bac4097a5b079b1bc36917e)
-                 
-            #uncompressing 
-            message(STATUS "Uncompressing git-patch for Windows")
-            execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf Git-1.9.5-preview20150319.tar.gz
-                            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/patch/")
-                            
-            #checking it's really ok
-            if(NOT EXISTS "${CMAKE_BINARY_DIR}/patch/msysgit-Git-1.9.5-preview20150319/bin/patch.exe") 
-                message(FATAL_ERROR "File ${CMAKE_BINARY_DIR}/patch/msysgit-Git-1.9.5-preview20150319/bin/patch.exe was still not found")                
-            endif()
+            set(PATCH_EXE "${CMAKE_BINARY_DIR}/patch/usr/bin/patch.exe")
+            if(NOT (EXISTS ${PATCH_EXE})) 
+                #download git-patch for Windows
+                message(STATUS "Downloading git-patch for Windows")
+                set(PATCH_URL https://github.com/git-for-windows/git/releases/download/v2.19.0.windows.1/Git-2.19.0-64-bit.tar.bz2)
+                file(DOWNLOAD ${PATCH_URL} ${CMAKE_BINARY_DIR}/patch/Git-2.19.0-64-bit.tar.bz2
+                     SHOW_PROGRESS
+                     EXPECTED_MD5 d1b59ab95ce6c8605770852181a52627
+                     STATUS download_status)
+
+                list(GET download_status 0 download_status_num)
+                if(NOT (download_status_num EQUAL 0))
+                    message(FATAL_ERROR "Can't download git patch")                
+                endif()
                      
-            #done !
-            set(PATCH_EXECUTABLE "${CMAKE_BINARY_DIR}/patch/msysgit-Git-1.9.5-preview20150319/bin/patch.exe")                   
+                #uncompressing 
+                message(STATUS "Uncompressing git-patch for Windows")
+                execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf Git-2.19.0-64-bit.tar.bz2
+                                WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/patch/")
+                                
+                #checking it's really ok
+                if(NOT EXISTS ${PATCH_EXE}) 
+                    message(FATAL_ERROR "File ${PATCH_EXE} was still not found")                
+                endif()
+            endif()
+
+            set(PATCH_EXECUTABLE ${PATCH_EXE})                   
             message(STATUS "Done")
-            
+
         else()
             message(FATAL_ERROR "ABORT : Patch not found.")
         endif()
