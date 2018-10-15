@@ -26,13 +26,14 @@ set(QT_CONFIGURE_CMD ./configure
     -nomake tests
 
     -no-dbus
-    -no-fontconfig
 
     -opengl desktop
     -qt-xcb
     -c++std c++11
     # We now build qt with gstreamer 1.0 (be sure you have installed libgstreamer-1.0-dev and libgstreamer-plugins-base1.0-dev)
     -gstreamer 1.0
+    # Compile FontConfig support. Requires libfontconfig1 & libfontconfig1-dev, libfreetype & libfreetype-dev.
+    -fontconfig
 )
 
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_qt}")
