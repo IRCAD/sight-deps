@@ -73,7 +73,8 @@ else()
             DOWNLOAD_DIR ${ARCHIVE_DIR}
             CONFIGURE_COMMAND echo "Nothing to configure..."
             BUILD_COMMAND echo "Nothing to build..."
-            INSTALL_COMMAND sh -c "cp ${VLC_LIB_DIR}/${VLC_LIB_NAME}* ${CMAKE_INSTALL_PREFIX}/lib"
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/lib
+                    COMMAND sh -c "cp ${VLC_LIB_DIR}/${VLC_LIB_NAME}* ${CMAKE_INSTALL_PREFIX}/lib"
                     COMMAND sh -c "cp ${VLC_LIB_DIR}/${VLC_CORE_LIB_NAME}* ${CMAKE_INSTALL_PREFIX}/lib"
                     COMMAND ${CMAKE_COMMAND} -E copy_directory ${VLC_INCLUDE_DIR} ${CMAKE_INSTALL_PREFIX}/include
                     COMMAND ${CMAKE_COMMAND} -E copy_directory ${VLC_PLUGIN_DIR} ${CMAKE_INSTALL_PREFIX}/vlc/plugins
@@ -123,9 +124,9 @@ else()
             DOWNLOAD_DIR ${ARCHIVE_DIR}
             CONFIGURE_COMMAND echo "Nothing to configure..."
             BUILD_COMMAND echo "Nothing to build..."
-            INSTALL_COMMAND sh -c "cp ${VLC_LIBRARY}* ${CMAKE_INSTALL_PREFIX}/lib"
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${PATH_DIR}/vlc ${CMAKE_INSTALL_PREFIX}/lib/vlc
+                    COMMAND sh -c "cp ${VLC_LIBRARY}* ${CMAKE_INSTALL_PREFIX}/lib"
                     COMMAND sh -c "cp ${VLC_CORE_LIBRARY}* ${CMAKE_INSTALL_PREFIX}/lib"
-                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PATH_DIR}/vlc ${CMAKE_INSTALL_PREFIX}/lib/vlc
             INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         )
 
