@@ -4,8 +4,8 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.1/single/qt-everywhere-src-5.11.1.tar.xz")
-set(QT5_HASHSUM 39602cb08f9c96867910c375d783eed00fc4a244bffaa93b801225d17950fb2b)
+set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.2/single/qt-everywhere-src-5.11.2.tar.xz")
+set(QT5_HASHSUM c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81)
 
 set(CACHED_URL ${QT5_URL})
 
