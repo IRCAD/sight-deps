@@ -374,11 +374,6 @@ set(CPACK_PACKAGE_VERSION_MINOR ${GIT_TAG_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_TAG_PATCH})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME}-${CMAKE_BUILD_TYPE})
 set(CPACK_PACKAGE_VENDOR "IRCAD/IHU")
-if(APPLE)
-    # Mac OS X has some problems with tgz archive, so we use zip generator.
-    set(CPACK_GENERATOR "ZIP")
-else()
-    set(CPACK_GENERATOR "TGZ")
-endif()
+set(CPACK_GENERATOR "TGZ")
 
 include(CPack)

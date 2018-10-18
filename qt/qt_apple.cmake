@@ -27,7 +27,6 @@ set(QT_CONFIGURE_CMD ./configure
     -pkg-config
 
     -no-glib
-    -no-fontconfig
     -no-xcb
 
     -c++std c++11

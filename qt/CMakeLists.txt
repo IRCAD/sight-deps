@@ -55,9 +55,3 @@ fwInstallFile(
     SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake
     DEST ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
 )
-
-fwInstallDir(
-    BINPKG qt
-    SRC ${CMAKE_CURRENT_SOURCE_DIR}/fonts
-    DEST ${CMAKE_INSTALL_PREFIX}/lib/fonts
-)
