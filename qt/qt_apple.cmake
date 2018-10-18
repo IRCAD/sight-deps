@@ -26,9 +26,8 @@ set(QT_CONFIGURE_CMD ./configure
     -nomake tests
 
     -no-glib
-    -no-fontconfig
     -no-xcb
-    
+
     -c++std c++11
 )
 
