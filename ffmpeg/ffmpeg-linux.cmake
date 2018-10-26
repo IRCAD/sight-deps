@@ -1,7 +1,7 @@
 #FFMPEG CMake script for Linux
 
-set(FFMPEG_URL "https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2")
-set(FFMPEG_HASHSUM 8c32191ce4c690175dfaccce8aefccc9794fae3dd1fff2013f00c15794e2d2ec)
+set(FFMPEG_URL "https://ffmpeg.org/releases/ffmpeg-4.0.tar.gz")
+set(FFMPEG_HASHSUM dc4b1c622baa34fc68d763cd2818e419d1af90271e0506604905f25a46ea8273)
 
 set(CACHED_URL ${FFMPEG_URL})
 
