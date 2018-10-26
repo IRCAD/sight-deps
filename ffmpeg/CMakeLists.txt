@@ -4,6 +4,7 @@ project(ffmpegBuilder)
 
 include(ExternalProject)
 
+# On windows, a redistrubable is downloaded while in linux we compile the whole thing.
 if(WIN32)
     include(ffmpeg-win32.cmake)
 elseif(APPLE)

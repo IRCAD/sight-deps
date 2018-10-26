@@ -1,5 +1,7 @@
 #FFMPEG CMake script for windows
 
+# specific version containing cuda options enable 
+# DO NOT CHANGE WITHOUTH CHECKING FIRST!!
 set(URL https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20180306-a43e9cd-win64-static.zip)
 set(FFMPEG_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg)
 

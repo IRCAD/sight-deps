@@ -6,13 +6,12 @@ execute_process(
     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/
 )
 
-
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E rename nv-codec-headers-master/ src/
     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/
 )
 
-
+# Actual compilation of headers, ffnvcodec.pc should be found in our lib/pkgconfig/ 
 execute_process(
     COMMAND make -f @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/src/Makefile PREFIX=@CMAKE_INSTALL_PREFIX@ install
     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/src
