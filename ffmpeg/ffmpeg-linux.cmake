@@ -5,6 +5,11 @@ set(FFMPEG_HASHSUM dc4b1c622baa34fc68d763cd2818e419d1af90271e0506604905f25a46ea8
 
 set(CACHED_URL ${FFMPEG_URL})
 
+include(FindPkgConfig)
+
+pkg_search_module(LIBX264 REQUIRED x264)
+pkg_search_module(LIBX265 REQUIRED x265)
+
 # ffmpeg configuration so it is build with the needed packages
 set(FFMPEG_CONFIGURE_CMD
      PKG_CONFIG_PATH=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig ./configure
@@ -20,8 +25,6 @@ set(FFMPEG_CONFIGURE_CMD
     --enable-cuvid
     --enable-nvenc
 )
-
-message("${FFMPEG_CONFIGURE_CMD}")
 
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_ffmpeg}")
 
