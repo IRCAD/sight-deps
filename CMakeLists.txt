@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
 
 project(BinPkgs)
 
@@ -148,6 +148,8 @@ if(NOT ANDROID)
     list(APPEND SUBDIRECTORIES camp)
     list(APPEND SUBDIRECTORIES cppunit)
     list(APPEND SUBDIRECTORIES dcmtk)
+
+    list(APPEND SUBDIRECTORIES ffmpeg)
 
     list(APPEND SUBDIRECTORIES json-spirit)
     list(APPEND SUBDIRECTORIES glm)
