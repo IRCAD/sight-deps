@@ -1,3 +1,68 @@
+# sight-deps 18.0.0
+
+## Bug fixes:
+
+### libarchive
+
+*Update to latest version to fix compilation on Mint 19.*
+
+### Qt
+
+*Remove font directory.*
+
+### vlc
+
+*Make sure ${CMAKE_INSTALL_PREFIX}/lib exists before copying stuff inside.*
+
+Resolve "Building vlc first fail on Linux because of missing ${CMAKE_INSTALL_PREFIX}/lib"
+
+### ogre
+
+*New patch preventing crashes when resizing the render window.*
+
+Fixes a crash we had when starting ogre applications. Qt sends many resize events at the beginning of the program, sometimes with tiny dimensions (usually 1). This would result in a crash due a render target having a zero dimension because of its size factor.
+
+Those crashes occurred mostly in release, especially on "fast" computers.
+
+This fix adds a small patch to ogre to guarantee that the render target is created.
+
+### MSVC2017
+
+*Various fixes to allow MSVC2017 build.*
+
+Resolve "Fix compiling for visual 2017"
+### gdcm
+
+*Update to 2.8.7 and fix include directory config.*
+
+## New features:
+
+### ffmpeg
+
+*Add new BinPkg that donwloads and copies ffmpeg binaries.*
+
+Feat/add ffmpeg
+
+### qml
+
+*Enable build options in Qt and VTK to use QML.*
+
+Upgrade the version of qt because there is more qml widgets in qt 5.11.2
+- Enable QtQuick build options in Qt
+- Enable vtkRenderingExternal build option in VTK
+- Upgrate freetype version to 2.9 because qt didn't compile on macOS
+
+### macos
+
+*Use TGZ as CPACK generator also for macOS.*
+
+### Qt
+
+*Enable fontconfig support on Linux.*
+
+Enable FontConfig in Qt for Linux
+
+
 # fw4spl-deps 17.2.0
 
 ## Bug fixes:
