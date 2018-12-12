@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
 
 project(BinPkgs)
 
@@ -149,6 +149,8 @@ if(NOT ANDROID)
     list(APPEND SUBDIRECTORIES cppunit)
     list(APPEND SUBDIRECTORIES dcmtk)
 
+    list(APPEND SUBDIRECTORIES ffmpeg)
+
     list(APPEND SUBDIRECTORIES json-spirit)
     list(APPEND SUBDIRECTORIES glm)
 
@@ -289,15 +291,15 @@ endforeach()
 
 set(SUBDIRECTORIES "")
 
-# Automatic detection of additional repositories using .fw4spl-deps files
-file(GLOB ADDITIONAL_REPOSITORIES_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../*/.fw4spl-deps)
+# Automatic detection of additional repositories using .sight-deps files
+file(GLOB ADDITIONAL_REPOSITORIES_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../*/.sight-deps)
 
 foreach(REPOSITORY ${ADDITIONAL_REPOSITORIES_FILES})
     file(READ ${REPOSITORY} REPO_RAW_NAME)
     string(STRIP ${REPO_RAW_NAME} REPO_RAW_NAME)
     string(TOUPPER ${REPO_RAW_NAME} REPO_NAME)
 
-    if(NOT ${REPO_NAME} STREQUAL "FW4SPL-DEPS")
+    if(NOT ${REPO_NAME} STREQUAL "SIGHT-DEPS")
 
         get_filename_component(REPO_DIR ${REPOSITORY} DIRECTORY)
         get_filename_component(REPO_DIR ${REPO_DIR} ABSOLUTE)
@@ -374,11 +376,6 @@ set(CPACK_PACKAGE_VERSION_MINOR ${GIT_TAG_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_TAG_PATCH})
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME}-${CMAKE_BUILD_TYPE})
 set(CPACK_PACKAGE_VENDOR "IRCAD/IHU")
-if(APPLE)
-    # Mac OS X has some problems with tgz archive, so we use zip generator.
-    set(CPACK_GENERATOR "ZIP")
-else()
-    set(CPACK_GENERATOR "TGZ")
-endif()
+set(CPACK_GENERATOR "TGZ")
 
 include(CPack)

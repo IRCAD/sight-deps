@@ -4,7 +4,9 @@ if(NOT MAKE_QT)
     set(MAKE_QT ${MAKE})
 endif()
 
-if(MSVC14)
+if(MSVC14 AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 19.10)
+    set(PLATFORM "win32-msvc2017")
+elseif(MSVC14)
     set(PLATFORM "win32-msvc2015")
 elseif(MSVC12)
     set(PLATFORM "win32-msvc2013")
@@ -42,7 +44,8 @@ set(QT_CONFIGURE_CMD ./configure.bat
 
 #hack: rcc.exe need zlib in path
 set(QT_PATCH_CMD ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qtbase/bin/${ZLIB_LIB_NAME}.dll
-         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qttools/bin/${ZLIB_LIB_NAME}.dll)
+         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_PREFIX}/bin/${ZLIB_LIB_NAME}.dll ${QT_SRC_DIR}/qttools/bin/${ZLIB_LIB_NAME}.dll
+)
 
 ExternalProject_Add(
     qt

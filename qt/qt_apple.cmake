@@ -24,11 +24,11 @@ set(QT_CONFIGURE_CMD ./configure
 
     -nomake examples
     -nomake tests
+    -pkg-config
 
     -no-glib
-    -no-fontconfig
     -no-xcb
-    
+
     -c++std c++11
 )
 
@@ -38,8 +38,6 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     )
 endif()
 
-list(APPEND QT_PATCH_CMD COMMAND ${PATCH_EXECUTABLE} -p1 -i ${QT_PATCH_DIR}/fix_xcode_9_3.patch -d <SOURCE_DIR>)
-
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_qt}")
 ExternalProject_Add(
     qt
@@ -47,7 +45,6 @@ ExternalProject_Add(
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     URL_HASH SHA256=${QT5_HASHSUM}
     BUILD_IN_SOURCE 1
-    PATCH_COMMAND ${QT_PATCH_CMD}
     DEPENDS zlib jpeg libpng tiff icu4c freetype
     CONFIGURE_COMMAND ${ENV_WRAPPER} ${QT_CONFIGURE_CMD}
     BUILD_COMMAND ${ENV_WRAPPER} ${MAKE} -j${NUMBER_OF_PARALLEL_BUILD} -f Makefile

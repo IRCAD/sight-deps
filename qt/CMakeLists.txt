@@ -4,8 +4,8 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.9/5.9.5/single/qt-everywhere-opensource-src-5.9.5.tar.xz")
-set(QT5_HASHSUM a75b87f46240a374fde93fb60038d63e3b570457785268c766c639b5dc18ccf6)
+set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.2/single/qt-everywhere-src-5.11.2.tar.xz")
+set(QT5_HASHSUM c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81)
 
 set(CACHED_URL ${QT5_URL})
 
@@ -26,14 +26,8 @@ set(QT_SKIP_MODULES_LIST
     -skip qtsensors
     -skip qttranslations
     -skip qtwayland
-    -skip qtwebengine
     -skip qtwebchannel
     -skip qtwebsockets
-    -skip qtdeclarative
-    -skip qtquickcontrols
-    -skip qtcanvas3d
-    -skip qtgraphicaleffects
-    -skip qtscript
     -skip qtserialport
     -skip qtdoc
     -skip qtlocation)
@@ -60,10 +54,4 @@ fwInstallFile(
     BINPKG qt
     SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake
     DEST ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
-)
-
-fwInstallDir(
-    BINPKG qt
-    SRC ${CMAKE_CURRENT_SOURCE_DIR}/fonts
-    DEST ${CMAKE_INSTALL_PREFIX}/lib/fonts
 )

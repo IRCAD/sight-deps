@@ -4,21 +4,24 @@ project(freetypeBuilder)
 
 include(ExternalProject)
 
-set(CACHED_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.1.tar.gz)
+set(CACHED_URL https://download.savannah.gnu.org/releases/freetype/freetype-2.9.1.tar.gz)
 
 
 set(FREETYPE_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
+set(FREETYPE_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i "${FREETYPE_PATCH_DIR}/CMakeLists.patch" -d "<SOURCE_DIR>")
+
 set(FREETYPE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                         -DBUILD_SHARED_LIBS:BOOL=ON
-                        
+                        -DDISABLE_FORCE_DEBUG_POSTFIX=ON
+
 )
 ExternalProject_Add(
     freetype
     URL ${CACHED_URL}
-    URL_HASH SHA256=8eec68b480bc7c1e2bce365f07f8c4cc29c1c238ac8737b8281c3895f5013cfc
+    URL_HASH SHA256=ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce
     DOWNLOAD_DIR ${ARCHIVE_DIR}
+    PATCH_COMMAND ${FREETYPE_PATCH_CMD}
     DEPENDS zlib
-    PATCH_COMMAND ${CMAKE_COMMAND} -E  copy_directory "${FREETYPE_PATCH_DIR}/" "<SOURCE_DIR>/"
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${FREETYPE_CMAKE_ARGS}
 )

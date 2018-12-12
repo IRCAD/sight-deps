@@ -8,7 +8,7 @@ set(LIBARCHIVE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                           -DENABLE_TEST:BOOL=OFF
 )
 
-set(CACHED_URL http://www.libarchive.org/downloads/libarchive-3.1.2.zip)
+set(CACHED_URL https://libarchive.org/downloads/libarchive-3.3.3.zip)
 
 set(PATCH_CMD "")
 
@@ -37,7 +37,7 @@ endif()
 ExternalProject_Add(
     libarchive
     URL ${CACHED_URL}
-    URL_HASH SHA256=2e14b48e520524317927baf991998e01bb2ecd6bd181cda34e41bfc8b010acfb
+    URL_HASH SHA256=9b1c4f5f92c527f4767bb4806f083a765affbdbd915e6be0345a0be97d833dca
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DEPENDS ${LIBARCHIVE_DEPENDS}
     PATCH_COMMAND ${PATCH_CMD}

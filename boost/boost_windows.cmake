@@ -1,5 +1,9 @@
 #ZLIB_LIB_NAME is defined in zlib BinPkgs script
-if(MSVC14)
+if(MSVC14 AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 19.10)
+    # Visual Studio 2017 toolset
+    # see https://stackoverflow.com/a/42738533/7831282
+    set(TOOLSET "msvc-14.1")
+elseif(MSVC14)
     set(TOOLSET "msvc-14.0")
 elseif(MSVC12)
     set(TOOLSET "msvc-12.0")
