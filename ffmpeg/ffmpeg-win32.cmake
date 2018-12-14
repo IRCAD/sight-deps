@@ -2,7 +2,7 @@
 
 # specific version containing cuda options enable 
 # DO NOT CHANGE WITHOUTH CHECKING FIRST!!
-set(URL https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20181212-32601fb-win64-static.zip)
+set(URL https://conan.ircad.fr/artifactory/list/data/ffmpeg-20181212-32601fb-win64-static.zip)
 set(FFMPEG_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg)
 
 ExternalProject_Add(
