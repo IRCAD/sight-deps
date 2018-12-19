@@ -2,13 +2,13 @@
 
 # specific version containing cuda options enable 
 # DO NOT CHANGE WITHOUTH CHECKING FIRST!!
-set(URL https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-20180306-a43e9cd-win64-static.zip)
+set(URL https://conan.ircad.fr/artifactory/list/data/ffmpeg-20181212-32601fb-win64-static.zip)
 set(FFMPEG_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg)
 
 ExternalProject_Add(
     ffmpeg
     URL ${URL}
-    URL_HASH SHA256=51b8cb2528a54a5debbb4a55d2dc87caa3daf43a28c751ce17b2e4d00abd0606
+    URL_HASH SHA256=3d2c126e49239a120b218b8530091fd4d74837cce136f24d6ef8b09bffd86816
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     CONFIGURE_COMMAND echo "Nothing to configure..."
     BUILD_COMMAND echo "Nothing to build..."
