@@ -1,3 +1,16 @@
+# sight-deps 18.0.1
+
+## Bug fixes:
+
+### ffmpeg
+
+*Use our artifactory to store the archive.*
+
+### ...
+
+*Fix url and cuda 10 compatibility.*
+
+
 # sight-deps 18.0.0
 
 ## Bug fixes:
