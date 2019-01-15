@@ -6,7 +6,7 @@ find_package(CUDA REQUIRED)
 
 include(ExternalProject)
 
-set(CACHED_URL https://github.com/fw4spl-org/libSGM/archive/d62610687e70bb1d890342b3dc00d8917c9ecc30.tar.gz)
+set(CACHED_URL https://github.com/fw4spl-org/libSGM/archive/93e2df1404e840aed39930d1088a683339040b6e.tar.gz)
 
 include( ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-boost.cmake )
 
@@ -44,7 +44,7 @@ endif()
 ExternalProject_Add(
     libSGM
     URL ${CACHED_URL}
-    URL_HASH SHA256=43e1863e76ad9d79f8d37687553c071a1f0d8db8f180cfa932020ef88a199c10
+    URL_HASH SHA256=51f13253fd5b7d12322031851f655217131c06827ee4cdb302b6f6115ee02573
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
     CMAKE_ARGS ${libSGM_CMAKE_ARGS}
