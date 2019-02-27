@@ -1,3 +1,12 @@
+# sight-deps 18.1.0
+
+## Bug fixes:
+
+### OpenIGTLink
+
+*Remove "igtl" suffix from library path.*
+
+
 # sight-deps 18.0.1
 
 ## Bug fixes:
