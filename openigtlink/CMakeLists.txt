@@ -14,6 +14,8 @@ else()
     set(OPENIGTLINK_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
+set(LIBRARY_DIR "lib/")
+
 set(OPENIGTLINK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                            -DBUILD_TESTING:BOOL=OFF
                            -DBUILD_EXAMPLES:BOOL=OFF
@@ -21,6 +23,7 @@ set(OPENIGTLINK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                            -DBUILD_SHARED_LIBS:BOOL=ON
                            -DOpenIGTLink_PROTOCOL_VERSION_2:BOOL=ON
                            -DCMAKE_CXX_FLAGS:STRING=${OPENIGTLINK_CMAKE_CXX_FLAGS}
+                           -DOpenIGTLink_INSTALL_LIB_DIR:STRING=${LIBRARY_DIR}
 )
 
 set(CACHED_URL https://github.com/openigtlink/OpenIGTLink/archive/v2.1.tar.gz)
