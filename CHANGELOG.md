@@ -1,3 +1,14 @@
+# sight-deps 19.0.0
+
+## Documentation:
+
+### conan
+
+*Remove sight-deps support.*
+
+Update readme to announce the end of support for this repository
+
+
 # sight-deps 18.1.0
 
 ## Bug fixes:
