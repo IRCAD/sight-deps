@@ -118,135 +118,15 @@ if(ENABLE_CUDA)
     string(REPLACE "\"" "" CUDA_TOOLKIT_ROOT_DIR ${CUDA_TOOLKIT_ROOT_DIR})
 endif()
 
-##DESKTOP DEPS ##
-if(NOT ANDROID)
 
-    # Use existing basic system libraries on Linux
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
-        list(APPEND SUBDIRECTORIES jpeg)
-        list(APPEND SUBDIRECTORIES zlib)
-        list(APPEND SUBDIRECTORIES tiff)
-        list(APPEND SUBDIRECTORIES png)
-        if (NOT APPLE)
-            list(APPEND SUBDIRECTORIES libiconv)
-        endif()
-        list(APPEND SUBDIRECTORIES libxml)
-        list(APPEND SUBDIRECTORIES expat)
-        list(APPEND SUBDIRECTORIES freetype)
-        list(APPEND SUBDIRECTORIES icu4c)
-    endif()
+list(APPEND SUBDIRECTORIES qt)
+list(APPEND SUBDIRECTORIES itk)
 
-    list(APPEND SUBDIRECTORIES boost)
+list(APPEND SUBDIRECTORIES opencv)
+list(APPEND SUBDIRECTORIES pcl)
 
-    list(APPEND SUBDIRECTORIES glew)
+list(APPEND SUBDIRECTORIES ogre)
 
-    list(APPEND SUBDIRECTORIES qt)
-    list(APPEND SUBDIRECTORIES vtk)
-    list(APPEND SUBDIRECTORIES gdcm)
-    list(APPEND SUBDIRECTORIES eigen)
-    list(APPEND SUBDIRECTORIES itk)
-    list(APPEND SUBDIRECTORIES camp)
-    list(APPEND SUBDIRECTORIES cppunit)
-    list(APPEND SUBDIRECTORIES dcmtk)
-
-    list(APPEND SUBDIRECTORIES ffmpeg)
-
-    list(APPEND SUBDIRECTORIES json-spirit)
-    list(APPEND SUBDIRECTORIES glm)
-
-    list(APPEND SUBDIRECTORIES cgogn)
-
-    if(ENABLE_AR)
-        list(APPEND SUBDIRECTORIES libarchive)
-        list(APPEND SUBDIRECTORIES openigtlink)
-        list(APPEND SUBDIRECTORIES zeromq)
-
-        list(APPEND SUBDIRECTORIES glog)
-        list(APPEND SUBDIRECTORIES CXSparse)
-        list(APPEND SUBDIRECTORIES ceresSolver)
-        list(APPEND SUBDIRECTORIES flann)
-
-        list(APPEND SUBDIRECTORIES openni)
-        if(UNIX)
-            list(APPEND SUBDIRECTORIES libfreenect)
-        endif()
-
-        list(APPEND SUBDIRECTORIES opencv)
-
-        list(APPEND SUBDIRECTORIES pcl)
-
-        list(APPEND SUBDIRECTORIES realsense)
-        list(APPEND SUBDIRECTORIES vlc)
-    endif()
-
-    if(ENABLE_OGRE)
-        list(APPEND SUBDIRECTORIES zzip)
-        list(APPEND SUBDIRECTORIES ogre)
-    endif()
-
-    if(ENABLE_EXTRAS)
-        list(APPEND SUBDIRECTORIES bullet)
-        list(APPEND SUBDIRECTORIES cryptopp)
-        list(APPEND SUBDIRECTORIES geodesic)
-
-        list(APPEND SUBDIRECTORIES jsoncpp)
-        list(APPEND SUBDIRECTORIES log4cpp)
-        list(APPEND SUBDIRECTORIES odil)
-
-        list(APPEND SUBDIRECTORIES tetgen)
-
-        if(ENABLE_CUDA)
-            list(APPEND SUBDIRECTORIES libSGM)
-        else()
-            message(WARNING "CUDA support is disabled, libSGM will not be built.")
-        endif()
-
-        if(ENABLE_AR)
-            list(APPEND SUBDIRECTORIES orbslam2)
-        endif()
-    endif()
-
-    if(ENABLE_SOFA)
-        if (NOT APPLE)
-            list(APPEND SUBDIRECTORIES freeglut)
-        endif()
-        list(APPEND SUBDIRECTORIES sofa)
-    endif()
-
-##ANDROID DEPS##
-else()
-    option(ENABLE_QT_ANDROID "Set to ON to build Qt for Android" OFF)
-
-    list(APPEND SUBDIRECTORIES jpeg)
-    list(APPEND SUBDIRECTORIES zlib)
-    list(APPEND SUBDIRECTORIES tiff)
-    list(APPEND SUBDIRECTORIES png)
-    list(APPEND SUBDIRECTORIES libiconv)
-    list(APPEND SUBDIRECTORIES libxml)
-    list(APPEND SUBDIRECTORIES expat)
-    list(APPEND SUBDIRECTORIES boost)
-    list(APPEND SUBDIRECTORIES freetype)
-
-    if(ENABLE_QT_ANDROID)
-        list(APPEND SUBDIRECTORIES qt)
-    endif()
-
-    list(APPEND SUBDIRECTORIES vtk)
-    list(APPEND SUBDIRECTORIES camp)
-    list(APPEND SUBDIRECTORIES json-spirit)
-    list(APPEND SUBDIRECTORIES android_native_app)
-    list(APPEND SUBDIRECTORIES glm)
-    if(ENABLE_AR)
-        list(APPEND SUBDIRECTORIES opencv)
-        list(APPEND SUBDIRECTORIES flann)
-        list(APPEND SUBDIRECTORIES eigen)
-        list(APPEND SUBDIRECTORIES pcl)
-        list(APPEND SUBDIRECTORIES libarchive)
-        list(APPEND SUBDIRECTORIES openigtlink)
-        list(APPEND SUBDIRECTORIES zeromq)
-    endif()
-
-endif()
 
 macro(createUninstallTarget SUBDIR )
 

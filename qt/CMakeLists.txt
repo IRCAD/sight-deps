@@ -4,8 +4,8 @@ project(qtBuilder)
 
 include(ExternalProject)
 
-set(QT5_URL "http://download.qt.io/official_releases/qt/5.11/5.11.2/single/qt-everywhere-src-5.11.2.tar.xz")
-set(QT5_HASHSUM c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81)
+set(QT5_URL "http://download.qt.io/archive/qt/5.14/5.14.2//single/qt-everywhere-src-5.14.2.tar.xz")
+set(QT5_HASHSUM b3d2b6d00e6ca8a8ede6d1c9bdc74daf)
 
 set(CACHED_URL ${QT5_URL})
 
@@ -22,36 +22,34 @@ set(QT_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/qt-prefix/src/qt)
 
 set(QT_SKIP_MODULES_LIST
     -skip qtactiveqt
+    -skip qtcanvas3d
+    -skip qtcharts
     -skip qtconnectivity
+    -skip qtdatavis3d
+    -skip qtdoc
+    -skip qtgamepad
+    -skip qtimageformats
+    -skip qtlocation
+    -skip qtpurchasing
+    -skip qtremoteobjects
+    -skip qtscript
+    -skip qtscxml
     -skip qtsensors
+    -skip qtserialbus
+    -skip qtserialport
+    -skip qtspeech
     -skip qttranslations
     -skip qtwayland
     -skip qtwebchannel
+    -skip qtwebengine
     -skip qtwebsockets
-    -skip qtserialport
-    -skip qtdoc
-    -skip qtlocation)
+    -skip qtwebview
+    -skip qtxmlpatterns)
 
 if(WIN32)
     include(qt_windows.cmake)
-elseif(APPLE)
-    include(qt_apple.cmake)
 elseif(UNIX)
     include(qt_linux.cmake)
 else()
     message(SEND_ERROR "Unknown plateform.")
 endif()
-
-if(APPLE)
-    ExternalProject_Add_Step(qt FRAMEWORK_FIXUP
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/OSXTools/osx_qt_symbolic_link.py
-        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
-        DEPENDEES COPY_FILES
-     )
-endif()
-
-fwInstallFile(
-    BINPKG qt
-    SRC ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-Qt5.cmake
-    DEST ${CMAKE_INSTALL_PREFIX}/fw-Qt5.cmake
-)

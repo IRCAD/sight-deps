@@ -4,8 +4,8 @@ project(ogre)
 
 include(ExternalProject)
 
-set(CACHED_URL https://github.com/OGRECave/ogre/archive/v1.11.2.zip)
-set(OGRE_HASH 30486251081daa89770dc8d00dde7ca7ebe89cf65c3b87f1653991b110645574)
+set(CACHED_URL https://github.com/OGRECave/ogre/archive/v1.12.9.zip)
+set(OGRE_HASH 9150ff2b7a8b6a79ad2a61586006617b3d4939b839572f00315664976335d69a)
 
 include( ${CMAKE_SOURCE_DIR}/cmake/findBinpkgs/fw-boost.cmake )
 
@@ -28,6 +28,7 @@ set(OGRE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                     -DOGRE_BUILD_PLUGIN_OCTREE:BOOL=OFF
                     -DOGRE_BUILD_PLUGIN_PCZ:BOOL=OFF
                     -DOGRE_BUILD_PLUGIN_PFX:BOOL=OFF
+                    -DOGRE_BUILD_PLUGIN_DOT_SCENE:BOOL=OFF
                     -DOGRE_BUILD_PLUGIN_STBI:BOOL=OFF
                     -DOGRE_BUILD_DEPENDENCIES:BOOL=OFF
                     -DOGRE_INSTALL_DEPENDENCIES:BOOL=OFF
@@ -44,22 +45,8 @@ set(OGRE_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                     -DOGRE_RESOURCEMANAGER_STRICT=0 # Use the (slow) legacy mode otherwise our apps break
    )
 
-set(OGRE_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-
-list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/prevent-empty-compositor-render-targets.diff -d <SOURCE_DIR>)
-
-if(APPLE)
-    list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/macos_paths.diff -d <SOURCE_DIR>)
-    list(APPEND OGRE_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OGRE_PATCH_DIR}/macos_ninja.diff -d <SOURCE_DIR>)
-endif()
-
 if(WIN32)
     set(OGRE_CMAKE_ARGS ${OGRE_CMAKE_ARGS} -DOGRE_INSTALL_PDB:BOOL=OFF)
-endif()
-
-set(OGRE_DEPENDS zzip)
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
-    list(APPEND OGRE_DEPENDS freetype boost zlib)
 endif()
 
 ExternalProject_Add(
@@ -67,9 +54,7 @@ ExternalProject_Add(
     URL ${CACHED_URL}
     URL_HASH SHA256=${OGRE_HASH}
     DOWNLOAD_DIR ${ARCHIVE_DIR}
-    DOWNLOAD_NAME ogre-1.11.2.zip
-    DEPENDS ${OGRE_DEPENDS}
-    PATCH_COMMAND ${OGRE_PATCH_CMD}
+    DOWNLOAD_NAME ogre-1.12.9.zip
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${OGRE_CMAKE_ARGS}
 )

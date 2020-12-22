@@ -52,16 +52,10 @@ set(PCL_CMAKE_ARGS      ${COMMON_CMAKE_ARGS}
                         -DWITH_QHULL:BOOL=OFF
 )
 
-set(PCL_DEPENDS eigen boost flann)
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
-    list(APPEND PCL_DEPENDS zlib)
-endif()
 
 if(NOT ANDROID)
     list(APPEND PCL_DEPENDS
         qt
-        vtk
-        openni
     )
 
     list(APPEND PCL_CMAKE_ARGS

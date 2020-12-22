@@ -29,7 +29,8 @@ set(QT_CONFIGURE_CMD ./configure
 
     -opengl desktop
     -qt-xcb
-    -c++std c++11
+    -xkbcommon
+    -c++std c++17
     # We now build qt with gstreamer 1.0 (be sure you have installed libgstreamer-1.0-dev and libgstreamer-plugins-base1.0-dev)
     -gstreamer 1.0
     # Compile FontConfig support. Requires libfontconfig1 & libfontconfig1-dev, libfreetype & libfreetype-dev.
@@ -38,11 +39,14 @@ set(QT_CONFIGURE_CMD ./configure
 
 set(INSTALL_ROOT "INSTALL_ROOT=${INSTALL_PREFIX_qt}")
 
+set(QT_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patches)
+set(QT_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${QT_PATCH_DIR}/xlib.diff -d <SOURCE_DIR> )
+
 ExternalProject_Add(
     qt
     URL ${CACHED_URL}
     DOWNLOAD_DIR ${ARCHIVE_DIR}
-    URL_HASH SHA256=${QT5_HASHSUM}
+    URL_HASH MD5=${QT5_HASHSUM}
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${QT_CONFIGURE_CMD}
     BUILD_COMMAND ${MAKE}
