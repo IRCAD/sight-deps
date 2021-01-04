@@ -77,20 +77,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     string(REPLACE "CMAKE_BUILD_TYPE=RelWithDebInfo" "CMAKE_BUILD_TYPE=Release" OPENCV_CMAKE_ARGS "${OPENCV_CMAKE_ARGS}")
 endif()
 
-if(ENABLE_CUDA)
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0)
-            message(WARNING "Your gcc version might not be supported by CUDA, please see http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html for compatibility.")
-
-            # Fixes a CUDA error: calling a constexpr __host__ function from a __device__ function for abs
-            # Appears with gcc 6.0
-            list(APPEND OPENCV_CMAKE_ARGS
-                -DCUDA_NVCC_FLAGS:STRING=--expt-relaxed-constexpr
-            )
-        endif()
-    endif()
-endif()
-
 list(APPEND OPENCV_CMAKE_ARGS
     -DWITH_CUDA:BOOL=${ENABLE_CUDA}
 )
@@ -109,21 +95,17 @@ else()
     )
 endif()
 
-set(OPENCV_PATCH_CMD)
-set(OPENCV_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
-    set(OPENCV_DEPENDS libpng zlib tiff)
-endif()
-
 if(ENABLE_CUDA)
-    if(WIN32)
-        # Workaround error C1041
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FS")
-        list(APPEND OPENCV_CMAKE_ARGS
-             -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-             -DCUDA_PROPAGATE_HOST_FLAGS:BOOL=ON
-        )
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0)
+            message(WARNING "Your gcc version might not be supported by CUDA, please see http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html for compatibility.")
+
+            # Fixes a CUDA error: calling a constexpr __host__ function from a __device__ function for abs
+            # Appears with gcc 6.0
+            list(APPEND OPENCV_CMAKE_ARGS
+                -DCUDA_NVCC_FLAGS:STRING=--expt-relaxed-constexpr
+            )
+        endif()
     endif()
     list(APPEND OPENCV_CMAKE_ARGS
          -DBUILD_CUDA_STUBS:BOOL=OFF
@@ -133,58 +115,36 @@ if(ENABLE_CUDA)
 endif()
 
 
-if(WIN32)
-    list(APPEND OPENCV_CMAKE_ARGS
-        -DWITH_DSHOW:BOOL=ON
-        -DWITH_MSMF:BOOL=OFF #required MSVC_2012+
-        -DWITH_GSTREAMER:BOOL=OFF
-        -DWITH_FFMPEG:BOOL=OFF
-        -DWITH_WEBP:BOOL=OFF
-        )
-    list(APPEND OPENCV_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/win_install.diff -d <SOURCE_DIR> )
-elseif(NOT ANDROID) #linux
-    if(APPLE)
-        list(APPEND OPENCV_CMAKE_ARGS
-            -DWITH_QUICKTIME:BOOL=OFF
-            -DWITH_FFMPEG:BOOL=OFF
-            -DBUILD_opencv_ts:BOOL=ON
-            )
-    else()
-        list(APPEND OPENCV_CMAKE_ARGS
-            #required ffmpeg or libav development packages: libavcodec-dev, libavformat-dev, libswscale-dev
-            -DWITH_FFMPEG:BOOL=ON
-            -DWITH_V4L:BOOL=ON
-            -DWITH_GSTREAMER:BOOL=OFF
-            )
-        # Clang >= 3.8 is not supported by CUDA 7.5
-        if(UNIX AND ${CMAKE_C_COMPILER_ID} STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.7)
-            list(APPEND OPENCV_CMAKE_ARGS -DCUDA_HOST_COMPILER:PATH=/usr/bin/gcc
-                                          -DCUDA_PROPAGATE_HOST_FLAGS:BOOL=OFF
-            )
-        endif()
-        list(APPEND OPENCV_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/cuda_clang.diff -d <SOURCE_DIR> )
+set(OPENCV_PATCH_CMD)
+set(OPENCV_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
 
-        # Patch needed because of Linux distributions that ship gst-plugins-bad linked with opencv 2.4
-        # As soon as we play a video, the cv register types are erased by the system library
-        # This patch hacks that problem but we can't ensure there are not other hidden troubles...
-        list(APPEND OPENCV_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/linux_version_conflict.diff -d <SOURCE_DIR> )
-    endif()
-
-else() #ANDROID
-    set(ANDROID_ARCH_NAME arm)
-    list(APPEND OPENCV_CMAKE_ARGS
-        -DENABLE_PRECOMPILED_HEADERS=OFF
-        -DBUILD_JPEG:BOOL=ON
-        -DBUILD_ANDROID_EXAMPLES:BOOL=OFF
-        -DBUILD_WITH_ANDROID_NDK:BOOL=ON
-        -DWITH_QT:BOOL=OFF
-    )
-    list(APPEND OPENCV_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/android.diff -d <SOURCE_DIR> )
+if(ENABLE_CUDA)
 endif()
 
-set(OPENCV_VERSION 3.4.0)
+
+list(APPEND OPENCV_CMAKE_ARGS
+    #required ffmpeg or libav development packages: libavcodec-dev, libavformat-dev, libswscale-dev
+    -DWITH_FFMPEG:BOOL=ON
+    -DWITH_V4L:BOOL=ON
+    -DWITH_GSTREAMER:BOOL=OFF
+    )
+# Clang >= 3.8 is not supported by CUDA 7.5
+if(UNIX AND ${CMAKE_C_COMPILER_ID} STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.7)
+    list(APPEND OPENCV_CMAKE_ARGS -DCUDA_HOST_COMPILER:PATH=/usr/bin/gcc
+                                    -DCUDA_PROPAGATE_HOST_FLAGS:BOOL=OFF
+    )
+endif()
+list(APPEND OPENCV_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/cuda_clang.diff -d <SOURCE_DIR> )
+
+# Patch needed because of Linux distributions that ship gst-plugins-bad linked with opencv 2.4
+# As soon as we play a video, the cv register types are erased by the system library
+# This patch hacks that problem but we can't ensure there are not other hidden troubles...
+list(APPEND OPENCV_PATCH_CMD COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${OPENCV_PATCH_DIR}/linux_version_conflict.diff -d <SOURCE_DIR> )
+
+
+set(OPENCV_VERSION 4.5.0)
 set(CACHED_URL https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz)
-set(OPENCV_HASHSUM 678cc3d2d1b3464b512b084a8cca1fad7de207c7abdf2caa1fed636c13e916da)
+set(OPENCV_HASHSUM dde4bf8d6639a5d3fe34d5515eab4a15669ded609a1d622350c7ff20dace1907)
 set(OPENCV_NAME "opencv_${OPENCV_VERSION}.tar.gz")
 
 configure_file(
@@ -193,15 +153,9 @@ configure_file(
     IMMEDIATE @ONLY
 )
 
-if(NOT ANDROID)
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
-        list(APPEND OPENCV_DEPENDS jpeg)
-    endif()
-    list(APPEND OPENCV_DEPENDS qt)
-    list(APPEND OPENCV_CMAKE_ARGS
-        -DWITH_QT:BOOL=ON
-    )
-endif()
+list(APPEND OPENCV_CMAKE_ARGS
+    -DWITH_QT:BOOL=ON
+)
 
 ExternalProject_Add(
     opencv
@@ -209,8 +163,7 @@ ExternalProject_Add(
     URL_HASH SHA256=${OPENCV_HASHSUM}
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DOWNLOAD_NAME ${OPENCV_NAME}
-    DEPENDS ${OPENCV_DEPENDS}
-    PATCH_COMMAND ${OPENCV_PATCH_CMD}
+    DEPENDS qt ffmpeg
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS ${OPENCV_CMAKE_ARGS}
 )

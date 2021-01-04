@@ -1,7 +1,7 @@
 #FFMPEG CMake script for Linux
 
-set(FFMPEG_URL "https://ffmpeg.org/releases/ffmpeg-4.0.tar.gz")
-set(FFMPEG_HASHSUM dc4b1c622baa34fc68d763cd2818e419d1af90271e0506604905f25a46ea8273)
+set(FFMPEG_URL "https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.xz")
+set(FFMPEG_HASHSUM ad009240d46e307b4e03a213a0f49c11b650e445b1f8be0dda2a9212b34d2ffb)
 
 set(CACHED_URL ${FFMPEG_URL})
 
@@ -58,4 +58,3 @@ ExternalProject_Add_Step(ffmpeg nv-codec-headers
     DEPENDERS build
     COMMENT "Download & build nv-codec-headers"
 )
-

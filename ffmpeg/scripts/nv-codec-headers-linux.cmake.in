@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 
-file(DOWNLOAD https://github.com/FFmpeg/nv-codec-headers/releases/download/n8.2.15.4/nv-codec-headers-8.2.15.4.tar.gz @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/nv-codec-headers-8.2.15.4.tar.gz )
+file(DOWNLOAD https://github.com/FFmpeg/nv-codec-headers/releases/download/n9.1.23.1/nv-codec-headers-9.1.23.1.tar.gz @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/nv-codec-headers-9.1.23.1.tar.gz )
 execute_process(
-    COMMAND ${CMAKE_COMMAND} -E tar xzf nv-codec-headers-8.2.15.4.tar.gz
+    COMMAND ${CMAKE_COMMAND} -E tar xzf nv-codec-headers-9.1.23.1.tar.gz
     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/
 )
 
 execute_process(
-    COMMAND ${CMAKE_COMMAND} -E rename nv-codec-headers-n8.2.15.4/ src/
+    COMMAND ${CMAKE_COMMAND} -E rename nv-codec-headers-9.1.23.1/ src/
     WORKING_DIRECTORY @CMAKE_CURRENT_BINARY_DIR@/nv-codec-headers/
 )
 
