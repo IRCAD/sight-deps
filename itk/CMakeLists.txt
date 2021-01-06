@@ -17,6 +17,11 @@ set(ITK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                    -DITK_USE_SYSTEM_TIFF:BOOL=ON
                    -DITK_USE_SYSTEM_ZLIB:BOOL=ON
                    -DITK_USE_SYSTEM_JPEG:BOOL=ON
+                   -DITK_USE_SYSTEM_HDF5:BOOL=ON
+                   -DITK_USE_SYSTEM_EIGEN:BOOL=ON
+                   -DITK_USE_SYSTEM_EXPAT:BOOL=ON
+                   -DITK_USE_SYSTEM_LIBRARIES:BOOL=ON
+                   -DITK_USE_SYSTEM_ICU:BOOL=ON
 
                    -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF
                    -DModule_ITKDeprecated:BOOL=OFF
@@ -28,6 +33,7 @@ set(ITK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                    -DModule_ITKIODCMTK:BOOL=OFF
                    -DModule_ITKIOHDF5:BOOL=OFF
                    -DModule_ITKIOTransformHDF5:BOOL=OFF
+                   -DModule_ITKIOTransformMINC:BOOL=OFF
 
                    -DModule_ITKAnisotropicSmoothing:BOOL=ON
                    -DModule_ITKAntiAlias:BOOL=ON
@@ -122,15 +128,12 @@ set(ITK_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                    -DModule_ITKVideoBridgeVXL:BOOL=OFF
 )
 
-set(CACHED_URL https://github.com/InsightSoftwareConsortium/ITK/archive/v4.13.0.tar.gz)
-set(ITK_PATCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/patch)
-set(ITK_PATCH_CMD "${PATCH_EXECUTABLE}" -p1 -i ${ITK_PATCH_DIR}/CMakeLists.txt.diff -d <SOURCE_DIR>
-    COMMAND "${PATCH_EXECUTABLE}" -p1 -i ${ITK_PATCH_DIR}/linux.diff -d <SOURCE_DIR>)
+set(CACHED_URL https://github.com/InsightSoftwareConsortium/ITK/archive/v5.1.2.tar.gz)
 
 ExternalProject_Add(
     itk
     URL ${CACHED_URL}
-    URL_HASH SHA256=37122d65b89699df33f34e0859f1e7adf5a6222060dc1c47383ff7aa4531223a
+    URL_HASH SHA256=651284ce6f68e8bd31db176a6b53f5679209a8ed5b6b5480c3591d66c6e10b60
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     PATCH_COMMAND ${ITK_PATCH_CMD}
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

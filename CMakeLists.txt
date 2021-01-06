@@ -102,13 +102,7 @@ else()
     endif()
 endif()
 
-option(ENABLE_AR "Set to ON to build fw4spl-ar dependencies (OpenCV, PCL,...)" OFF)
-
-option(ENABLE_OGRE "Build Ogre3D (necessary for fw4spl-ogre)" OFF)
-option(ENABLE_EXTRAS "Build dependencies that are not used currently in the open-source repositories (Odil, Bullet, realsense, libSGM,...)" OFF)
-cmake_dependent_option(ENABLE_CUDA "Set to ON to build packages with CUDA support (OpenCV, PCL, libSGM)" OFF "ENABLE_AR" OFF)
-
-option(ENABLE_SOFA "Set to ON to build sofa" OFF)
+option(ENABLE_CUDA "Set to ON to build packages with CUDA support (OpenCV, PCL, libSGM)" OFF)
 
 ## CUDA stuff
 if(ENABLE_CUDA)
@@ -119,14 +113,11 @@ if(ENABLE_CUDA)
 endif()
 
 
-list(APPEND SUBDIRECTORIES qt)
-#list(APPEND SUBDIRECTORIES itk)
-list(APPEND SUBDIRECTORIES ffmpeg)
-
-list(APPEND SUBDIRECTORIES opencv)
 #list(APPEND SUBDIRECTORIES pcl)
-
-list(APPEND SUBDIRECTORIES ogre)
+list(APPEND SUBDIRECTORIES dbow2)
+list(APPEND SUBDIRECTORIES g2o)
+list(APPEND SUBDIRECTORIES pangolin)
+list(APPEND SUBDIRECTORIES openvslam)
 
 
 macro(createUninstallTarget SUBDIR )

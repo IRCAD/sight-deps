@@ -3,9 +3,8 @@ stages:
   - deploy
 
 .linux_template: &linux_job
-  image: "${SIGHT_CI_MINT19}:dev"
+  image: "${SIGHT_CI_UBUNTU20_10}:dev"
   before_script:
-    - sudo ln -sfnv /usr/local/cuda-10.1 /usr/local/cuda
     - export CCACHE_BASEDIR=${PWD}
     - export CCACHE_COMPILERCHECK=content
     - export CCACHE_MAXSIZE=32G
@@ -14,8 +13,8 @@ stages:
     - export CCACHE_NOHASHDIR=1
     - export CCACHE_DIR=/cache/ccache
     - conan config set storage.path=/cache/conan-cache/data
-    - export CC=/usr/local/lib/ccache/gcc-8
-    - export CXX=/usr/local/lib/ccache/g++-8
+    - export CC=/usr/local/lib/ccache/gcc
+    - export CXX=/usr/local/lib/ccache/g++
     - mkdir -p $CI_PROJECT_DIR/install $CI_PROJECT_DIR/build
     - sudo chown -R sight:sight .
     # Reset the time of all files to improve the use of ccache.
