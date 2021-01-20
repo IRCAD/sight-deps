@@ -16,12 +16,12 @@ set(PANGOLIN_CMAKE_ARGS ${COMMON_CMAKE_ARGS}
                            -DBUILD_PANGOLIN_EIGEN:BOOL=OFF
 )
 
-set(CACHED_URL https://github.com/stevenlovegrove/Pangolin/archive/11e2ecb7df02989a219e9270b9c2c96858b99ed6.zip)
+set(CACHED_URL https://github.com/stevenlovegrove/Pangolin/archive/86eb4975fc4fc8b5d92148c2e370045ae9bf9f5d.zip)
 
 ExternalProject_Add(
     pangolin
     URL ${CACHED_URL}
-    URL_HASH SHA256=abbffe4c3f5a31dc4f5a524274f4f941683e6057cb7142725980b8485aaa4b44
+    URL_HASH SHA256=c6f6f23b139517f55a99efc5a917b9fb599c879fa8809728b86330297d18c991
     DOWNLOAD_DIR ${ARCHIVE_DIR}
     DOWNLOAD_NAME pangolin.tar.gz
     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

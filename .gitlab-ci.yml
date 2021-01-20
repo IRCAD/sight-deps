@@ -74,12 +74,7 @@ build:release-linux:
       cmake $CI_PROJECT_DIR
       -G Ninja
       -DCMAKE_INSTALL_PREFIX=$CI_PROJECT_DIR/install
-      -DCMAKE_BUILD_TYPE=Release
-      -DBUILD_TESTS=ON
-      -DBUILD_DOCUMENTATION=OFF
-      -DENABLE_PCH=OFF
-      -DBUILD_SDK=ON
-      -DSPYLOG_LEVEL=error
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo
     - find . -type f -iname '*.?pp' -exec touch -t 197001010000 {} \;
     - ninja
     # Install and build the package
