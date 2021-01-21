@@ -47,19 +47,19 @@ build:debug-linux:
     - ccache -s
     # Retrieve package name and store it as environment files since inherited environment variable is experimental
     # and need to explicitly enabled (https://docs.gitlab.com/ee/ci/variables/#enable-inherited-environment-variables-core-only)
-    - export ARCHIVE_FILE_PATH=$(find $CI_PROJECT_DIR/build -maxdepth 1 -iname '*.tar.gz' -type f -print -quit)
-    - export ARCHIVE_NAME=$(basename -s .tar.gz ${ARCHIVE_FILE_PATH})
-    - mv ${ARCHIVE_FILE_PATH} $CI_PROJECT_DIR/archive/archive.tar.gz
-    - echo "export ARCHIVE_NAME=${ARCHIVE_NAME}" > $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
-    - cat $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
+    - export DEBUG_ARCHIVE_FILE_PATH=$(find $CI_PROJECT_DIR/build -maxdepth 1 -iname '*.tar.gz' -type f -print -quit)
+    - export DEBUG_ARCHIVE_NAME=$(basename -s .tar.gz ${DEBUG_ARCHIVE_FILE_PATH})
+    - mv ${DEBUG_ARCHIVE_FILE_PATH} $CI_PROJECT_DIR/archive/debug_archive.tar.gz
+    - echo "export DEBUG_ARCHIVE_NAME=${DEBUG_ARCHIVE_NAME}" > $CI_PROJECT_DIR/archive/DEBUG_ARCHIVE_NAME.env
+    - cat $CI_PROJECT_DIR/archive/DEBUG_ARCHIVE_NAME.env
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SDK"
+    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
-      - $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
-      - $CI_PROJECT_DIR/archive/archive.tar.gz
+      - $CI_PROJECT_DIR/archive/DEBUG_ARCHIVE_NAME.env
+      - $CI_PROJECT_DIR/archive/debug_archive.tar.gz
     when: always
 
-build:release-linux:
+build:relwithdebinfo-linux:
   <<: *linux_job
   stage: build
   dependencies: []
@@ -83,16 +83,16 @@ build:release-linux:
     - ccache -s
     # Retrieve package name and store it as environment files since inherited environment variable is experimental
     # and need to explicitly enabled (https://docs.gitlab.com/ee/ci/variables/#enable-inherited-environment-variables-core-only)
-    - export ARCHIVE_FILE_PATH=$(find $CI_PROJECT_DIR/build -maxdepth 1 -iname '*.tar.gz' -type f -print -quit)
-    - export ARCHIVE_NAME=$(basename -s .tar.gz ${ARCHIVE_FILE_PATH})
-    - mv ${ARCHIVE_FILE_PATH} $CI_PROJECT_DIR/archive/archive.tar.gz
-    - echo "export ARCHIVE_NAME=${ARCHIVE_NAME}" > $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
-    - cat $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
+    - export RELWITHDEBINFO_ARCHIVE_FILE_PATH=$(find $CI_PROJECT_DIR/build -maxdepth 1 -iname '*.tar.gz' -type f -print -quit)
+    - export RELWITHDEBINFO_ARCHIVE_NAME=$(basename -s .tar.gz ${RELWITHDEBINFO_ARCHIVE_FILE_PATH})
+    - mv ${RELWITHDEBINFO_ARCHIVE_FILE_PATH} $CI_PROJECT_DIR/archive/relwithdebinfo_archive.tar.gz
+    - echo "export RELWITHDEBINFO_ARCHIVE_NAME=${RELWITHDEBINFO_ARCHIVE_NAME}" > $CI_PROJECT_DIR/archive/RELWITHDEBINFO_ARCHIVE_NAME.env
+    - cat $CI_PROJECT_DIR/archive/RELWITHDEBINFO_ARCHIVE_NAME.env
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SDK"
+    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
-      - $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
-      - $CI_PROJECT_DIR/archive/archive.tar.gz
+      - $CI_PROJECT_DIR/archive/RELWITHDEBINFO_ARCHIVE_NAME.env
+      - $CI_PROJECT_DIR/archive/relwithdebinfo_archive.tar.gz
     when: always
 
 deploy:debug-linux:
@@ -100,33 +100,33 @@ deploy:debug-linux:
   stage: deploy
   when: manual
   script:
-    - source $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
+    - source $CI_PROJECT_DIR/archive/DEBUG_ARCHIVE_NAME.env
     - >
       if [ -z "$CI_COMMIT_TAG" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ] && [ "$CI_COMMIT_REF_NAME" != "master" ]; then
-        export ARTIFACTORY_NAME=${ARCHIVE_NAME}
+        export DEBUG_ARTIFACTORY_NAME=${DEBUG_ARCHIVE_NAME}
       else
-        export ARTIFACTORY_NAME="sight-deps-Debug-latest-$CI_COMMIT_REF_NAME-Linux"
+        export DEBUG_ARTIFACTORY_NAME="sight-deps-debug-latest-$CI_COMMIT_REF_NAME-linux.tar.gz"
       fi
-    - curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/archive.tar.gz "https://conan.ircad.fr/artifactory/data/sight-deps/${ARTIFACTORY_NAME}"
+    - curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/debug_archive.tar.gz "https://conan.ircad.fr/artifactory/data/sight-deps/${DEBUG_ARTIFACTORY_NAME}"
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SDK"
+    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
-      - $CI_PROJECT_DIR/archive/archive.tar.gz
+      - $CI_PROJECT_DIR/archive/debug_archive.tar.gz
 
-deploy:release-linux:
+deploy:relwithdebinfo-linux:
   <<: *linux_job
   stage: deploy
   when: manual
   script:
-    - source $CI_PROJECT_DIR/archive/ARCHIVE_NAME.env
+    - source $CI_PROJECT_DIR/archive/RELWITHDEBINFO_ARCHIVE_NAME.env
     - >
       if [ -z "$CI_COMMIT_TAG" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ] && [ "$CI_COMMIT_REF_NAME" != "master" ]; then
-        export ARTIFACTORY_NAME=${ARCHIVE_NAME}
+        export RELWITHDEBINFO_ARTIFACTORY_NAME=${RELWITHDEBINFO_ARCHIVE_NAME}
       else
-        export ARTIFACTORY_NAME="sight-deps-Release-latest-$CI_COMMIT_REF_NAME-Linux"
+        export RELWITHDEBINFO_ARTIFACTORY_NAME="sight-deps-relwithdebinfo-latest-$CI_COMMIT_REF_NAME-linux.tar.gz"
       fi
-    - curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/archive.tar.gz "https://conan.ircad.fr/artifactory/data/sight-deps/${ARTIFACTORY_NAME}"
+    - curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/relwithdebinfo_archive.tar.gz "https://conan.ircad.fr/artifactory/data/sight-deps/${RELWITHDEBINFO_ARTIFACTORY_NAME}"
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SDK"
+    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
-      - $CI_PROJECT_DIR/archive/archive.tar.gz
+      - $CI_PROJECT_DIR/archive/relwithdebinfo_archive.tar.gz
