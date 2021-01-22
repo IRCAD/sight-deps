@@ -59,7 +59,7 @@ list(APPEND COMMON_CMAKE_ARGS
     -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 )    
 
-
+# List all package to build
 list(APPEND SUBDIRECTORIES dbow2)
 list(APPEND SUBDIRECTORIES g2o)
 list(APPEND SUBDIRECTORIES pangolin)
@@ -162,6 +162,7 @@ add_custom_target(fix_path
 # CPack related code
 install(CODE "set(HOST_INSTALL_PATH \"${CMAKE_INSTALL_PREFIX}\")")
 install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/cpack_install.cmake")
+install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/fix_path.cmake")
 
 include(${CMAKE_SOURCE_DIR}/cmake/utils/get_git_rev.cmake)
 set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_TAG_MAJOR})

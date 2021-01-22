@@ -2,16 +2,14 @@ stages:
   - build
   - deploy
 
-.linux_template: &linux_job
-  image: "${SIGHT_CI_UBUNTU20_10}:dev"
-
 .linux_build_template: &linux_build
   image: "${SIGHT_CI_UBUNTU20_10}:dev"
   stage: build
   dependencies: []
   before_script:
-    - mkdir -p $CI_PROJECT_DIR/install $CI_PROJECT_DIR/build
+    # Create directory structure
     - sudo chown -R sight:sight .
+    - mkdir -p $CI_PROJECT_DIR/install $CI_PROJECT_DIR/build $CI_PROJECT_DIR/archive
     # Merge the branch into dev.
     - >
       if [ -z "$CI_COMMIT_TAG" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ] && [ "$CI_COMMIT_REF_NAME" != "master" ]; then
@@ -23,7 +21,6 @@ stages:
         git merge "origin/"${CI_COMMIT_REF_NAME} --no-commit --no-ff
       fi
     # Build the project on the merge result.
-    - mkdir -p $CI_PROJECT_DIR/archive
     - rm -rf $CI_PROJECT_DIR/archive/* $CI_PROJECT_DIR/build/* $CI_PROJECT_DIR/install/*
     - cd $CI_PROJECT_DIR/build/
     - >
@@ -35,6 +32,10 @@ stages:
     # Install and build the package
     - ninja install
     - ninja package
+    # Test if there is no hard coded path
+    - echo "Search for hard coded path in cmake config files:"
+    - grep -rn $CI_PROJECT_DIR --include="*.cmake" $CI_PROJECT_DIR/install || export exit_code=$?
+    - if [[ $exit_code -ne 0 ]]; then echo "No hard coded path found."; else false; fi;
     # Retrieve package name and store it as environment files since inherited environment variable is experimental
     # and need to explicitly enabled (https://docs.gitlab.com/ee/ci/variables/#enable-inherited-environment-variables-core-only)
     - export ARCHIVE_FILE_PATH=$(find $CI_PROJECT_DIR/build -maxdepth 1 -iname '*.tar.zst' -type f -print -quit)
@@ -50,12 +51,10 @@ build:debug-linux:
     - cat $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - ls -la $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
       # We cannot use ${DEBUG_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/Debug_archive.env
       - $CI_PROJECT_DIR/archive/Debug_archive.tar.zst
-    when: always
 
 build:release-linux:
   <<: *linux_build
@@ -65,12 +64,10 @@ build:release-linux:
     - cat $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - ls -la $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
       # We cannot use ${RELEASE_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/Release_archive.env
       - $CI_PROJECT_DIR/archive/Release_archive.tar.zst
-    when: always
 
 build:relwithdebinfo-linux:
   <<: *linux_build
@@ -85,13 +82,14 @@ build:relwithdebinfo-linux:
       # We cannot use ${RELEASE_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/RelWithDebInfo_archive.env
       - $CI_PROJECT_DIR/archive/RelWithDebInfo_archive.tar.zst
-    when: always
 
 .linux_deploy_template: &linux_deploy
   image: "${SIGHT_CI_UBUNTU20_10}:dev"
   stage: deploy
-  dependencies: []
   before_script:
+    # Create directory structure
+    - sudo chown -R sight:sight .
+    - mkdir -p $CI_PROJECT_DIR/install $CI_PROJECT_DIR/build $CI_PROJECT_DIR/archive
     - source $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - >
       if [ -z "$CI_COMMIT_TAG" ] && [ "$CI_COMMIT_REF_NAME" != "dev" ] && [ "$CI_COMMIT_REF_NAME" != "master" ]; then
@@ -103,6 +101,8 @@ build:relwithdebinfo-linux:
 
 deploy:debug-linux:
   <<: *linux_deploy
+  dependencies:
+    - build:debug-linux
   variables:
     BUILD_TYPE: "Debug"
   when: manual
@@ -110,15 +110,15 @@ deploy:debug-linux:
     - cat $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - ls -la $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
       # We cannot use ${DEBUG_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/Debug_archive.env
       - $CI_PROJECT_DIR/archive/Debug_archive.tar.zst
-    when: always
 
 deploy:release-linux:
   <<: *linux_deploy
+  dependencies:
+    - build:release-linux
   variables:
     BUILD_TYPE: "Release"
   when: manual
@@ -126,15 +126,15 @@ deploy:release-linux:
     - cat $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - ls -la $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
       # We cannot use ${RELEASE_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/Release_archive.env
       - $CI_PROJECT_DIR/archive/Release_archive.tar.zst
-    when: always
 
 deploy:relwithdebinfo-linux:
   <<: *linux_deploy
+  dependencies:
+    - build:relwithdebinfo-linux
   variables:
     BUILD_TYPE: "RelWithDebInfo"
   when: manual
@@ -142,9 +142,7 @@ deploy:relwithdebinfo-linux:
     - cat $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.env
     - ls -la $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst
   artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}-SIGHTDEPS"
     paths:
       # We cannot use ${RELWITHDEBINFO_ARCHIVE_NAME} here
       - $CI_PROJECT_DIR/archive/RelWithDebInfo_archive.env
       - $CI_PROJECT_DIR/archive/RelWithDebInfo_archive.tar.zst
-    when: always
