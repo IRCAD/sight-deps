@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(SightDeps)
+project(sight-deps)
 
 # Looking for patch command
 include( ${CMAKE_SOURCE_DIR}/cmake/utils/patch.cmake)
@@ -167,8 +167,10 @@ include(${CMAKE_SOURCE_DIR}/cmake/utils/get_git_rev.cmake)
 set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_TAG_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${GIT_TAG_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_TAG_PATCH})
-set(CPACK_PACKAGE_NAME ${PROJECT_NAME}-${CMAKE_BUILD_TYPE})
+string(TOLOWER "${PROJECT_NAME}-${CMAKE_BUILD_TYPE}" CPACK_PACKAGE_NAME)
 set(CPACK_PACKAGE_VENDOR "IRCAD")
-set(CPACK_GENERATOR "TGZ")
+set(CPACK_GENERATOR "TZST")
 
 include(CPack)
+
+
