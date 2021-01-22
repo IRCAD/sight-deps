@@ -1,2 +1,0 @@
-set(VTK_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/)
-

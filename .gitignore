@@ -13,3 +13,5 @@ archive/*
 # reject and backup files
 *.rej
 *.orig
+build/*
+install/*
