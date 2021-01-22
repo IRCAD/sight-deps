@@ -1,0 +1,44 @@
+# Fix hardcoded paths in DBoW2 cmake files
+message("Fix DBoW2 CMake export files...")
+
+file(GLOB_RECURSE DBOW2_CMAKE_FILES "${CMAKE_INSTALL_PREFIX}/lib/cmake/DBoW2*/*.cmake")
+
+foreach(CMAKE_FILE ${DBOW2_CMAKE_FILES})
+    file(STRINGS ${CMAKE_FILE} CMAKE_FILE_CONTENT NEWLINE_CONSUME)
+    string(REGEX REPLACE "${HOST_INSTALL_PATH}" "\${_IMPORT_PREFIX}" CMAKE_FILE_CONTENT_MODIFIED "${CMAKE_FILE_CONTENT}")
+    file(WRITE ${CMAKE_FILE} ${CMAKE_FILE_CONTENT_MODIFIED})
+endforeach()
+
+# Fix hardcoded paths in Pangolin cmake files
+message("Fix Pangolin CMake export files...")
+
+file(GLOB_RECURSE PANGOLIN_CMAKE_FILES "${CMAKE_INSTALL_PREFIX}/lib/cmake/Pangolin*/*.cmake")
+
+foreach(CMAKE_FILE ${PANGOLIN_CMAKE_FILES})
+    file(STRINGS ${CMAKE_FILE} CMAKE_FILE_CONTENT NEWLINE_CONSUME)
+    string(REGEX REPLACE "${HOST_INSTALL_PATH}" "\${_IMPORT_PREFIX}" CMAKE_FILE_CONTENT_MODIFIED "${CMAKE_FILE_CONTENT}")
+    string(REGEX REPLACE "SET\(.*Pangolin_CMAKEMODULES.*\)" "" CMAKE_FILE_CONTENT_MODIFIED "${CMAKE_FILE_CONTENT_MODIFIED}")
+    file(WRITE ${CMAKE_FILE} ${CMAKE_FILE_CONTENT_MODIFIED})
+endforeach()
+
+# Fix hardcoded paths in g2o cmake files
+message("Fix g2o CMake export files...")
+
+file(GLOB_RECURSE G2O_CMAKE_FILES "${CMAKE_INSTALL_PREFIX}/lib/cmake/g2o*/*.cmake")
+
+foreach(CMAKE_FILE ${G2O_CMAKE_FILES})
+    file(STRINGS ${CMAKE_FILE} CMAKE_FILE_CONTENT NEWLINE_CONSUME)
+    string(REGEX REPLACE "${HOST_INSTALL_PATH}" "\${_IMPORT_PREFIX}" CMAKE_FILE_CONTENT_MODIFIED "${CMAKE_FILE_CONTENT}")
+    file(WRITE ${CMAKE_FILE} ${CMAKE_FILE_CONTENT_MODIFIED})
+endforeach()
+
+# Fix hardcoded paths in openvslam cmake files
+message("Fix openvslam CMake export files...")
+
+file(GLOB_RECURSE OPENVSLAM_CMAKE_FILES "${CMAKE_INSTALL_PREFIX}/lib/cmake/openvslam*/*.cmake")
+
+foreach(CMAKE_FILE ${OPENVSLAM_CMAKE_FILES})
+    file(STRINGS ${CMAKE_FILE} CMAKE_FILE_CONTENT NEWLINE_CONSUME)
+    string(REGEX REPLACE "${HOST_INSTALL_PATH}" "\${_IMPORT_PREFIX}" CMAKE_FILE_CONTENT_MODIFIED "${CMAKE_FILE_CONTENT}")
+    file(WRITE ${CMAKE_FILE} ${CMAKE_FILE_CONTENT_MODIFIED})
+endforeach()

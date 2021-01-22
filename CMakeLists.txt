@@ -59,7 +59,7 @@ list(APPEND COMMON_CMAKE_ARGS
     -DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 )    
 
-
+# List all package to build
 list(APPEND SUBDIRECTORIES dbow2)
 list(APPEND SUBDIRECTORIES g2o)
 list(APPEND SUBDIRECTORIES pangolin)
@@ -162,12 +162,13 @@ add_custom_target(fix_path
 # CPack related code
 install(CODE "set(HOST_INSTALL_PATH \"${CMAKE_INSTALL_PREFIX}\")")
 install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/cpack_install.cmake")
+install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/utils/fix_path.cmake")
 
 include(${CMAKE_SOURCE_DIR}/cmake/utils/get_git_rev.cmake)
 set(CPACK_PACKAGE_VERSION_MAJOR ${GIT_TAG_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${GIT_TAG_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${GIT_TAG_PATCH})
-string(TOLOWER "${PROJECT_NAME}-${CMAKE_BUILD_TYPE}" CPACK_PACKAGE_NAME)
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}-${CMAKE_BUILD_TYPE}")
 set(CPACK_PACKAGE_VENDOR "IRCAD")
 set(CPACK_GENERATOR "TZST")
 
