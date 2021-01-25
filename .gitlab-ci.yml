@@ -96,7 +96,7 @@ build:relwithdebinfo-linux:
         curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst "https://conan.ircad.fr/artifactory/data/sight-deps/${ARCHIVE_NAME}.tar.zst"
       else
         curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst "https://conan.ircad.fr/artifactory/data/sight-deps/${ARCHIVE_NAME}-$CI_COMMIT_REF_NAME.tar.zst"
-        curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst "https://conan.ircad.fr/artifactory/data/sight-deps/sight-deps-${BUILD_TYPE}-latest-Linux.tar.zst"
+        curl -u${CONAN_USERNAME}:${CONAN_PASSWORD} -T $CI_PROJECT_DIR/archive/${BUILD_TYPE}_archive.tar.zst "https://conan.ircad.fr/artifactory/data/sight-deps/sight-deps-${BUILD_TYPE}-latest-Linux-$CI_COMMIT_REF_NAME.tar.zst"
       fi
 
 deploy:debug-linux:
